@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DGL Marketing OS</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -219,27 +220,123 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;
 .flex-sb{display:flex;justify-content:space-between;align-items:center}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .pulse{animation:pulse 2s infinite}
+
+/* TOP NAV */
+html,body{height:100%}
+body{display:flex;flex-direction:column;overflow:hidden}
+.topnav{height:58px;background:var(--navy);display:flex;align-items:center;padding:0;flex-shrink:0;border-bottom:2px solid var(--green);z-index:200}
+.tn-brand{width:248px;display:flex;align-items:center;gap:10px;padding:0 16px;flex-shrink:0;border-right:1px solid rgba(255,255,255,.08)}
+.tn-logo{background:var(--green);color:#fff;font-weight:900;font-size:13px;padding:5px 10px;border-radius:7px;letter-spacing:.5px;flex-shrink:0}
+.tn-titles .tn-title{color:#fff;font-weight:800;font-size:13px;line-height:1.2}
+.tn-titles .tn-sub{color:rgba(255,255,255,.35);font-size:10px}
+.tn-center{flex:1;display:flex;justify-content:center;padding:0 20px}
+.tn-search{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:7px 14px;display:flex;align-items:center;gap:8px;width:380px;max-width:100%}
+.tn-search-ph{color:rgba(255,255,255,.35);font-size:12.5px;flex:1}
+.tn-kbd{background:rgba(255,255,255,.1);color:rgba(255,255,255,.3);font-size:10px;padding:1px 5px;border-radius:3px;font-family:monospace}
+.tn-right{display:flex;align-items:center;gap:12px;padding-right:20px;flex-shrink:0}
+.tn-date{color:rgba(255,255,255,.55);font-size:12px;white-space:nowrap}
+.tn-bell{position:relative;color:rgba(255,255,255,.6);font-size:17px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.tn-badge{position:absolute;top:1px;right:1px;background:#EF4444;color:#fff;font-size:8px;font-weight:900;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--navy)}
+.tn-avatar{width:32px;height:32px;background:var(--green);color:#fff;font-weight:800;font-size:12px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tn-uname{color:rgba(255,255,255,.8);font-size:13px;font-weight:600}
+
+/* APP BODY */
+.app-body{display:flex;flex:1;overflow:hidden}
+
+/* UPDATED SIDEBAR */
+.sidebar{background:#04024A}
+.sb-search{padding:10px;border-bottom:1px solid rgba(255,255,255,.06)}
+.sb-search input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:7px 12px;color:rgba(255,255,255,.7);font-size:12px;outline:none;font-family:inherit}
+.sb-search input::placeholder{color:rgba(255,255,255,.3)}
+.nav-arr{margin-left:auto;color:rgba(255,255,255,.25);font-size:10px;transition:transform .2s;display:inline-block}
+.nav-arr.open{transform:rotate(90deg)}
+.nav-sub{overflow:hidden;max-height:0;transition:max-height .25s ease}
+.nav-sub.open{max-height:300px}
+.nav-sub-item{display:flex;align-items:center;padding:6px 10px 6px 36px;border-radius:7px;cursor:pointer;color:rgba(255,255,255,.38);font-size:12px;transition:all .15s;margin-bottom:1px}
+.nav-sub-item:hover{background:rgba(255,255,255,.05);color:rgba(255,255,255,.75)}
+.nav-sub-item.active{color:#77B82A;background:rgba(119,184,42,.08);font-weight:600}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
+.btn-outline{background:#fff;border:1px solid var(--border);color:var(--text)}
+.btn-outline:hover{border-color:var(--navy)}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:hover{background:var(--navy2)}
+
+/* CHART CONTAINERS */
+.chart-row{display:grid;grid-template-columns:1.7fr 1fr;gap:16px;margin-bottom:20px}
+@media(max-width:1100px){.chart-row{grid-template-columns:1fr}}
+.chart-card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:20px}
+.chart-title{font-size:14px;font-weight:700;margin-bottom:3px}
+.chart-sub{font-size:11px;color:var(--muted);margin-bottom:14px}
+.chart-legend{display:flex;gap:14px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--muted)}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.channel-legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.channel-item{display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--muted)}
+.channel-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 </style>
 </head>
 <body>
 
-<aside class="sidebar">
-  <div class="sb-logo">
-    <div class="sb-logo-top">
-      <div class="logo-badge">DGL</div>
-      <div class="logo-text">Marketing OS</div>
+<!-- TOP NAV -->
+<header class="topnav">
+  <div class="tn-brand">
+    <div class="tn-logo">DGL</div>
+    <div class="tn-titles">
+      <div class="tn-title">Marketing OS</div>
+      <div class="tn-sub">DGL Freight Broker · 3PL</div>
     </div>
-    <div class="logo-sub">Sistema Operativo de Marketing</div>
+  </div>
+  <div class="tn-center">
+    <div class="tn-search">
+      <span style="color:rgba(255,255,255,.4);font-size:13px">🔍</span>
+      <div class="tn-search-ph">Buscar campañas, leads, contenido...</div>
+      <div class="tn-kbd">⌘K</div>
+    </div>
+  </div>
+  <div class="tn-right">
+    <div class="tn-date" id="tn-date"></div>
+    <div class="tn-bell">🔔<span class="tn-badge">5</span></div>
+    <div class="tn-avatar">CS</div>
+    <div class="tn-uname">Cristian</div>
+  </div>
+</header>
+
+<div class="app-body">
+
+<aside class="sidebar">
+  <div class="sb-search">
+    <input type="text" placeholder="🔍  Buscar...">
   </div>
   <nav class="sb-nav">
     <div class="nav-label">Principal</div>
-    <div class="nav-item active" data-section="dashboard"><span class="nav-icon">⚡</span> Dashboard</div>
-    <div class="nav-item" data-section="procesos"><span class="nav-icon">🔄</span> Procesos <span class="nav-pill">10</span></div>
+    <div class="nav-item active" data-section="dashboard"><span class="nav-icon">⚡</span> Dashboard <span class="nav-pill">5</span></div>
+
+    <div class="nav-label">Estrategia</div>
+    <div class="nav-item" id="toggle-planeacion"><span class="nav-icon">🎯</span> Planeación <span class="nav-arr" id="arr-planeacion">▶</span></div>
+    <div class="nav-sub" id="sub-planeacion">
+      <div class="nav-sub-item" data-section="objetivos">Objetivos SMART</div>
+      <div class="nav-sub-item" data-section="okrs">OKRs</div>
+      <div class="nav-sub-item" data-section="buyer">Buyer Persona / ICP</div>
+      <div class="nav-sub-item" data-section="journey">Customer Journey</div>
+      <div class="nav-sub-item" data-section="foda">FODA + Competencia</div>
+      <div class="nav-sub-item" data-section="benchmark">Benchmark</div>
+    </div>
+
     <div class="nav-label">Operación</div>
+    <div class="nav-item" data-section="procesos"><span class="nav-icon">🔄</span> Procesos <span class="nav-pill">10</span></div>
     <div class="nav-item" data-section="herramientas"><span class="nav-icon">🛠️</span> Herramientas</div>
     <div class="nav-item" data-section="kpis"><span class="nav-icon">📊</span> KPIs & Métricas</div>
     <div class="nav-item" data-section="automatizaciones"><span class="nav-icon">⚙️</span> Automatizaciones</div>
     <div class="nav-item" data-section="ia"><span class="nav-icon">✨</span> IA Aplicada</div>
+
+    <div class="nav-label">Marca y Digital</div>
+    <div class="nav-item" data-section="branding"><span class="nav-icon">🎨</span> Branding</div>
+    <div class="nav-item" data-section="sem"><span class="nav-icon">🔍</span> SEO & SEM</div>
+    <div class="nav-item" data-section="mktg"><span class="nav-icon">📢</span> Marketing</div>
+    <div class="nav-item" data-section="contenido"><span class="nav-icon">📝</span> Contenido</div>
+
     <div class="nav-label">Estructura</div>
     <div class="nav-item" data-section="equipo"><span class="nav-icon">👤</span> Equipo & RACI</div>
     <div class="nav-item" data-section="entregables"><span class="nav-icon">📋</span> Entregables</div>
@@ -259,17 +356,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;
 </aside>
 
 <div class="main">
-  <div class="topbar">
-    <div class="topbar-title" id="topbar-title">Dashboard</div>
-    <div class="topbar-updated">🟢 Actualizado: Junio 26, 2026</div>
-  </div>
-
   <div class="content">
 
     <!-- ===================== DASHBOARD ===================== -->
     <div class="section active" id="dashboard">
-      <div class="pg-title">Buenos días, Cristian 👋</div>
-      <div class="pg-sub">Aquí está el estado de Marketing hoy — Viernes, 26 de Junio 2026</div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">
+        <div>
+          <div class="pg-title" id="dash-greeting">Buenos días, Cristian 👋</div>
+          <div class="pg-sub" id="dash-datestr" style="margin-bottom:0">Resumen ejecutivo — Semana 26, Julio 2026</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-outline">⬇ Exportar</button>
+          <button class="btn btn-primary">+ Nueva Campaña</button>
+        </div>
+      </div>
 
       <div class="g4" style="margin-bottom:20px">
         <div class="kcard">
@@ -296,6 +396,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;
           <div class="kcard-val">6<span style="font-size:16px;font-weight:500;color:var(--muted)">/15</span></div>
           <div class="kcard-sub">+5 puntos esta sesión</div>
           <div class="kcard-trend tup">↑ Mejorado hoy</div>
+        </div>
+      </div>
+
+      <!-- CHARTS -->
+      <div class="chart-row">
+        <div class="chart-card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
+            <div>
+              <div class="chart-title">Pipeline & Revenue</div>
+              <div class="chart-sub">Últimos 12 meses — USD</div>
+            </div>
+            <div class="chart-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:#05035C"></div> Pipeline</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#77B82A"></div> Revenue Cerrado</div>
+            </div>
+          </div>
+          <canvas id="chartPipeline" height="160"></canvas>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Mix de Canales</div>
+          <div class="chart-sub">% participación por canal</div>
+          <canvas id="chartChannels" height="180"></canvas>
+          <div class="channel-legend" id="channel-legend"></div>
         </div>
       </div>
 
@@ -386,8 +509,245 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;
       <div id="seo-content"></div>
     </div>
 
+    <!-- NUEVAS SECCIONES -->
+    <div class="section" id="objetivos">
+      <div class="pg-title">Objetivos SMART — Q3 2026</div>
+      <div class="pg-sub">Julio · Agosto · Septiembre 2026</div>
+      <div class="g2">
+        <div class="card"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--green2);margin-bottom:12px">Generación de Demanda</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px">Alcanzar 30 RFQs/mes promedio en Q3</div>
+          <div style="font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:12px">Incrementar la generación de solicitudes de cotización de 24 actuales a 30 mensuales mediante contenido SEO + outbound + email.</div>
+          <div style="font-size:12px;color:var(--muted)">📅 Sep 30, 2026 · 📊 CRM · 👤 Cristian S.</div></div>
+        <div class="card"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:12px">Posicionamiento Digital</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px">Subir AI SEO score de 6/15 a 12/15</div>
+          <div style="font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:12px">Publicar 5 páginas de contenido AI-optimizado, subir llms.txt, resolver Cloudflare y obtener la primera citación verificada en Perplexity.</div>
+          <div style="font-size:12px;color:var(--muted)">📅 Sep 30, 2026 · 📊 Auditoría Manual · 👤 Cristian S.</div></div>
+        <div class="card"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--amber);margin-bottom:12px">Tráfico Orgánico</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px">Llegar a 5,000 sesiones orgánicas/mes</div>
+          <div style="font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:12px">Aumentar de 3,240 a 5,000 sesiones mensuales publicando 2 páginas de alto volumen (FTL vs LTL + What is a Freight Broker).</div>
+          <div style="font-size:12px;color:var(--muted)">📅 Sep 30, 2026 · 📊 GA4 · 👤 Cristian S.</div></div>
+        <div class="card"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--red);margin-bottom:12px">Retención</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px">Reactivar 3 clientes inactivos en Q3</div>
+          <div style="font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:12px">Lanzar campaña de win-back en agosto para cuentas con +6 meses sin operaciones. Meta: 3 cuentas activas y al menos 1 operación cerrada.</div>
+          <div style="font-size:12px;color:var(--muted)">📅 Sep 30, 2026 · 📊 CRM · 👤 Ventas + Marketing</div></div>
+      </div>
+    </div>
+
+    <div class="section" id="okrs">
+      <div class="pg-title">OKRs — Q3 2026</div>
+      <div class="pg-sub">Objectives & Key Results · Julio–Septiembre 2026</div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="card">
+          <div style="font-size:15px;font-weight:800;color:var(--navy);margin-bottom:14px">O1 — Generar Demanda Calificada</div>
+          ${[["KR1","30 RFQs/mes promedio en Q3","24 actual","CRM"],["KR2","Pipeline de $500K generado por Marketing","$340K actual","CRM"],["KR3","15 reuniones comerciales agendadas","9 actual","CRM"]].map(k=>`
+          <div style="padding:10px 0;border-bottom:1px solid var(--border2);display:flex;gap:12px;align-items:center">
+            <div style="font-size:10px;font-weight:800;background:var(--navy3);color:var(--navy);padding:2px 7px;border-radius:4px;white-space:nowrap">${k[0]}</div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:600">${k[1]}</div><div style="font-size:11.5px;color:var(--muted)">Actual: ${k[2]} · Fuente: ${k[3]}</div></div>
+          </div>`).join('')}
+        </div>
+        <div class="card">
+          <div style="font-size:15px;font-weight:800;color:var(--navy);margin-bottom:14px">O2 — Posicionamiento Digital y AI</div>
+          ${[["KR1","AI SEO Score de 6/15 a 12/15","6/15 actual","Manual"],["KR2","1 citación verificada en Perplexity","0 actual","Manual"],["KR3","3 páginas nuevas publicadas y rankeadas","0 actual","GSC"]].map(k=>`
+          <div style="padding:10px 0;border-bottom:1px solid var(--border2);display:flex;gap:12px;align-items:center">
+            <div style="font-size:10px;font-weight:800;background:var(--green3);color:var(--green2);padding:2px 7px;border-radius:4px;white-space:nowrap">${k[0]}</div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:600">${k[1]}</div><div style="font-size:11.5px;color:var(--muted)">Actual: ${k[2]} · Fuente: ${k[3]}</div></div>
+          </div>`).join('')}
+        </div>
+        <div class="card">
+          <div style="font-size:15px;font-weight:800;color:var(--navy);margin-bottom:14px">O3 — Contenido y Social Media</div>
+          ${[["KR1","Email open rate >28% sostenido","31% actual","MailPoet"],["KR2","48 posts LinkedIn en Q3 (4/semana)","12/mes actual","LinkedIn Analytics"],["KR3","2 blog posts publicados por mes","0.5/mes actual","WordPress"]].map(k=>`
+          <div style="padding:10px 0;border-bottom:1px solid var(--border2);display:flex;gap:12px;align-items:center">
+            <div style="font-size:10px;font-weight:800;background:#EFF6FF;color:#2563EB;padding:2px 7px;border-radius:4px;white-space:nowrap">${k[0]}</div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:600">${k[1]}</div><div style="font-size:11.5px;color:var(--muted)">Actual: ${k[2]} · Fuente: ${k[3]}</div></div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="buyer">
+      <div class="pg-title">Buyer Persona / ICP</div>
+      <div class="pg-sub">Perfil del cliente ideal de DGL en el mercado norteamericano</div>
+      <div class="g3">
+        <div class="card">
+          <div style="width:48px;height:48px;background:var(--navy);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px">🏭</div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--green2);margin-bottom:6px">Primary ICP</div>
+          <div style="font-size:15px;font-weight:800;margin-bottom:4px">VP / Director de Logística</div>
+          <div style="font-size:12.5px;color:var(--muted);margin-bottom:12px">Importador o fabricante en USA con volumen de 50+ shipments/mes. Necesita un broker confiable para FTL, LTL e intermodal en USA y cross-border México.</div>
+          <div style="font-size:11.5px;color:var(--muted)">📍 Texas · Florida · California · Midwest<br>🏢 Revenue $10M–$500M · Industrias: Retail, Auto, Food</div>
+        </div>
+        <div class="card">
+          <div style="width:48px;height:48px;background:#0A66C2;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px">🚢</div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#2563EB;margin-bottom:6px">Secondary ICP</div>
+          <div style="font-size:15px;font-weight:800;margin-bottom:4px">Freight Forwarder Owner</div>
+          <div style="font-size:12.5px;color:var(--muted);margin-bottom:12px">Dueño de freight forwarder que necesita capacidad terrestre confiable para sus clientes importadores. Valora respuesta rápida, disponibilidad de trucks y visibilidad en tiempo real.</div>
+          <div style="font-size:11.5px;color:var(--muted)">📍 Miami · Los Angeles · Chicago · Houston<br>🏢 Pequeño-mediano FF · Volumen 20–200 containers/mes</div>
+        </div>
+        <div class="card">
+          <div style="width:48px;height:48px;background:#77B82A;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px">🌎</div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--green2);margin-bottom:6px">Tertiary ICP</div>
+          <div style="font-size:15px;font-weight:800;margin-bottom:4px">Operations Manager — Exportador Mexicano</div>
+          <div style="font-size:12.5px;color:var(--muted);margin-bottom:12px">Empresa mexicana que exporta a USA con necesidad de drayage, cross-border y distribución en territorio americano. Busca un broker que entienda pedimentos, pilotos y regulaciones fronterizas.</div>
+          <div style="font-size:11.5px;color:var(--muted)">📍 Monterrey · CDMX · Guadalajara · Tijuana<br>🏢 Maquiladoras, Agro, Automotive</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="journey">
+      <div class="pg-title">Customer Journey</div>
+      <div class="pg-sub">Mapa del recorrido del cliente desde awareness hasta fidelización</div>
+      <div class="card" style="overflow-x:auto">
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border-radius:8px;overflow:hidden;min-width:700px">
+          ${[["🔍 Awareness","El cliente identifica que necesita un freight broker confiable en Norteamérica","Google Search, LinkedIn, referidos","Blog posts, LinkedIn, AI Overviews"],["🤔 Consideración","Compara DGL vs competidores. Revisa web, servicios y credibilidad","dglus.com/faqs, pricing page, LinkedIn","Páginas de servicio, casos, testimonials"],["📋 Evaluación","Solicita cotización y compara precios, tiempos y servicio","RFQ form, email, llamada","Propuesta, one-pager, respuesta rápida"],["✅ Decisión","Aprueba el servicio y envía la primera operación","Email, phone","Contrato, onboarding, primer pickup"],["🔄 Retención","Se convierte en cuenta recurrente y refiere a otros","Email nurture, CRM, llamadas","Reportes, proactive comm, upsell"]].map(s=>`
+          <div style="background:#fff;padding:16px">
+            <div style="font-size:13px;font-weight:800;margin-bottom:8px">${s[0]}</div>
+            <div style="font-size:11.5px;color:var(--text);line-height:1.5;margin-bottom:8px">${s[1]}</div>
+            <div style="font-size:10.5px;color:var(--muted);margin-bottom:4px"><strong>Touchpoints:</strong> ${s[2]}</div>
+            <div style="font-size:10.5px;color:var(--green2)"><strong>DGL acción:</strong> ${s[3]}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="foda">
+      <div class="pg-title">FODA + Competencia</div>
+      <div class="pg-sub">Análisis estratégico DGL vs mercado de freight brokerage en Norteamérica</div>
+      <div class="g2" style="margin-bottom:20px">
+        <div class="card"><div style="font-size:13px;font-weight:800;color:var(--green2);margin-bottom:10px">✅ Fortalezas</div>${["Especialización en cross-border USA-México","Respuesta rápida y atención personalizada","Conocimiento operativo profundo (pedimentos, pilotos, bonded)","Flexibilidad para carga compleja: HazMat, oversized, refrigerado","Tecnología aplicada (Claude AI) para mejorar servicio"].map(f=>`<div style="font-size:13px;padding:5px 0;border-bottom:1px solid var(--border2)">• ${f}</div>`).join('')}</div>
+        <div class="card"><div style="font-size:13px;font-weight:800;color:var(--red);margin-bottom:10px">⚠ Debilidades</div>${["Presencia digital limitada vs grandes brokers","Score AI SEO bajo (6/15)","Contenido educativo insuficiente","Equipo de marketing pequeño (1 persona)","CRM no totalmente optimizado"].map(f=>`<div style="font-size:13px;padding:5px 0;border-bottom:1px solid var(--border2)">• ${f}</div>`).join('')}</div>
+        <div class="card"><div style="font-size:13px;font-weight:800;color:var(--blue);margin-bottom:10px">🚀 Oportunidades</div>${["Nearshoring en México genera demanda cross-border récord","AI Search aumenta visibilidad orgánica sin pagar ads","Freight forwarders buscan brokers terrestres confiables","Grandes brokers son lentos y genéricos — DGL puede ser más ágil","LinkedIn B2B logistics aún poco explotado"].map(f=>`<div style="font-size:13px;padding:5px 0;border-bottom:1px solid var(--border2)">• ${f}</div>`).join('')}</div>
+        <div class="card"><div style="font-size:13px;font-weight:800;color:var(--amber);margin-bottom:10px">🔴 Amenazas</div>${["CH Robinson, Echo, XPO tienen recursos masivos de marketing","Volatilidad de tarifas de flete presiona márgenes","Regulaciones cambiantes en frontera USA-México","Tecnología de carriers que buscan eliminar el broker","Recesión reduce volumen de importaciones"].map(f=>`<div style="font-size:13px;padding:5px 0;border-bottom:1px solid var(--border2)">• ${f}</div>`).join('')}</div>
+      </div>
+    </div>
+
+    <div class="section" id="benchmark">
+      <div class="pg-title">Benchmark de Marketing</div>
+      <div class="pg-sub">Métricas DGL vs benchmarks de la industria B2B logistics</div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <table class="ktable">
+          <thead><tr><th>Métrica</th><th>DGL Actual</th><th>Benchmark B2B</th><th>Estado</th></tr></thead>
+          <tbody>${[
+            ["Email Open Rate","31%",">25%","✅ Por encima"],
+            ["Email CTR","3.8%",">2%","✅ Por encima"],
+            ["Sesiones Web/mes","3,240","5,000+ (meta)","🟡 En progreso"],
+            ["Conversión web a lead","1.8%","2–3%","🟡 Mejorando"],
+            ["Posts LinkedIn/mes","12","16–20","🟡 Debajo"],
+            ["Engagement LinkedIn","2.4%",">3%","🟡 Debajo"],
+            ["Costo por Lead (CPL)","$180","<$150","🔴 Optimizar"],
+            ["AI SEO Score","6/15","12–15/15 (meta)","🔴 En proceso"],
+          ].map(r=>`<tr><td class="kn">${r[0]}</td><td class="kv">${r[1]}</td><td style="color:var(--muted)">${r[2]}</td><td>${r[3]}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section" id="branding">
+      <div class="pg-title">Branding & Identidad Visual</div>
+      <div class="pg-sub">Manual de marca, colores, tipografía y lineamientos creativos DGL</div>
+      <div class="g2">
+        <div class="card">
+          <div class="sec-label" style="margin-top:0">Colores Corporativos</div>
+          <div style="display:flex;gap:12px;margin-bottom:20px">
+            <div style="flex:1;background:#05035C;border-radius:10px;padding:20px;text-align:center"><div style="color:#fff;font-weight:800;font-size:15px">#05035C</div><div style="color:rgba(255,255,255,.6);font-size:11px;margin-top:3px">Navy — Primario</div></div>
+            <div style="flex:1;background:#77B82A;border-radius:10px;padding:20px;text-align:center"><div style="color:#fff;font-weight:800;font-size:15px">#77B82A</div><div style="color:rgba(255,255,255,.8);font-size:11px;margin-top:3px">Green — Acento</div></div>
+            <div style="flex:1;background:#fff;border:2px solid var(--border);border-radius:10px;padding:20px;text-align:center"><div style="color:var(--navy);font-weight:800;font-size:15px">#FFFFFF</div><div style="color:var(--muted);font-size:11px;margin-top:3px">Blanco</div></div>
+          </div>
+          <div class="sec-label">Tipografía</div>
+          <div style="font-size:13px;color:var(--muted)">Fuente principal: <strong style="color:var(--text)">Inter / System UI</strong><br>Títulos: 800 weight · Cuerpo: 400–600 weight</div>
+        </div>
+        <div class="card">
+          <div class="sec-label" style="margin-top:0">Lineamientos de Voz</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            ${[["✅ Usar","Lenguaje ejecutivo B2B, datos concretos, beneficios para el cliente"],["✅ Usar","Términos de industria: FTL, LTL, drayage, cross-border, intermodal"],["✅ Usar","Confianza, capacidad, velocidad de respuesta, control operativo"],["❌ Evitar","Superlativos vacíos: 'el mejor', 'increíble', 'revolucionario'"],["❌ Evitar","Lenguaje genérico: 'soluciones innovadoras', 'servicio de calidad'"],["❌ Evitar","Hablar de trucks y camiones — DGL es un broker, no un carrier"]].map(l=>`<div style="font-size:12.5px;padding:7px;border-radius:6px;background:${l[0].includes('✅')?'#ECFDF5':'#FEF2F2'}">${l[0]} ${l[1]}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="sem">
+      <div class="pg-title">SEO & SEM</div>
+      <div class="pg-sub">Estrategia de posicionamiento orgánico y paid search · dglus.com</div>
+      <div class="ibox">💡 DGL opera 100% con SEO orgánico. No hay presupuesto activo en Google Ads. El foco es contenido AI-optimizado para capturar demanda existente sin costo de clic.</div>
+      <div class="g2">
+        <div class="card">
+          <div class="sec-label" style="margin-top:0">Keywords Objetivo Q3</div>
+          ${[["freight broker USA Mexico","2,900/mes","Alta","dglus.com/cross-border..."],["ftl vs ltl freight","8,100/mes","Alta","dglus.com/ftl-vs-ltl/"],["what is a freight broker","40,500/mes","Media","dglus.com/what-is-a-freight-broker/"],["drayage rates 2026","1,600/mes","Alta","dglus.com/drayage-rates/"],["ltl freight class guide","3,200/mes","Media","dglus.com/ltl-freight-class/"]].map(k=>`
+          <div style="padding:9px 0;border-bottom:1px solid var(--border2)">
+            <div style="font-size:13px;font-weight:600;font-family:monospace">"${k[0]}"</div>
+            <div style="display:flex;gap:12px;margin-top:4px;font-size:11.5px;color:var(--muted)">
+              <span>📊 ${k[1]}</span><span>💰 Comp ${k[2]}</span><span>🔗 ${k[3]}</span>
+            </div>
+          </div>`).join('')}
+        </div>
+        <div class="card">
+          <div class="sec-label" style="margin-top:0">Estado Técnico SEO</div>
+          ${[["Core Web Vitals","✅ Optimizado con WP Rocket"],["Sitemap XML","✅ Generado por RankMath"],["robots.txt","⚠ Corrección parcial — Cloudflare pendiente"],["Schema FAQPage",`✅ Live en /faqs/`],["Organization Schema","✅ Live en homepage"],["llms.txt","❌ Pendiente subir al servidor"],["Velocidad móvil","🟡 En revisión"]].map(i=>`
+          <div style="padding:8px 0;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between">
+            <span style="font-size:13px;font-weight:500">${i[0]}</span>
+            <span style="font-size:12.5px">${i[1]}</span>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="mktg">
+      <div class="pg-title">Campañas de Marketing</div>
+      <div class="pg-sub">Campañas activas y planificadas — Q3 2026</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        ${[
+          {name:"Outbound — Importadores Miami",type:"Generación de Demanda",status:"progress",desc:"Secuencia de 3 emails ultra-personalizados a importadores de Miami con operaciones Cross-Border. Segmento: empresas con HQ en Miami-Dade, revenue >$5M, industria retail/consumer goods.",meta:"10 respuestas, 3 calls agendadas",inicio:"Jul 8",owner:"Cristian S."},
+          {name:"Nurture — Leads Inactivos +60 días",type:"Reactivación",status:"pending",desc:"Campaña de re-engagement para leads en CRM sin interacción en 60+ días. Ángulo diferente: tendencias de nearshoring y cómo afecta sus operaciones de importación desde México.",meta:"5% tasa de reactivación",inicio:"Jul 15",owner:"Cristian S."},
+          {name:"AI SEO — Contenido Cross-Border",type:"Posicionamiento",status:"active",desc:"Publicación de 3 páginas clave para captura de demanda en AI Overviews: FTL vs LTL, What is a Freight Broker, Cross-Border USA-Mexico Guide.",meta:"3 páginas publicadas, 1 citación AI",inicio:"En progreso",owner:"Cristian S."},
+          {name:"LinkedIn — Posicionamiento Autoridad",type:"Brand Awareness",status:"active",desc:"Publicación de 4 posts semanales en LinkedIn con mix educativo (40%), industria (30%), DGL (20%), social proof (10%). Goal: posicionar a Cristian Serna como referente logístico.",meta:"16+ posts/mes, engagement >3%",inicio:"Continuo",owner:"Cristian S."},
+        ].map(c=>`
+        <div class="card" style="display:flex;gap:16px;align-items:flex-start">
+          <div style="flex:1">
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+              <div style="font-size:14px;font-weight:700">${c.name}</div>
+              <span class="badge ${c.status==='active'?'b-active':c.status==='progress'?'b-progress':'b-pending'}">${c.status==='active'?'Active':c.status==='progress'?'En Progreso':'Pendiente'}</span>
+            </div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px">${c.type}</div>
+            <div style="font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:8px">${c.desc}</div>
+            <div style="font-size:12px;display:flex;gap:14px;color:var(--muted)"><span>🎯 Meta: ${c.meta}</span><span>📅 Inicio: ${c.inicio}</span><span>👤 ${c.owner}</span></div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="section" id="contenido">
+      <div class="pg-title">Estrategia de Contenido</div>
+      <div class="pg-sub">Plan editorial Q3 2026 · Contenido AI-optimizado para freight brokerage</div>
+      <div class="ibox">🎯 Todo el contenido se diseña con doble propósito: posicionar en Google Y ser citado por ChatGPT, Perplexity y Google AI Overviews. Estructura: definición extractable + tabla comparativa + FAQ con schema.</div>
+      <div class="g2">
+        <div class="card">
+          <div class="sec-label" style="margin-top:0">Pipeline de Contenido Q3</div>
+          ${[
+            {titulo:"FTL vs LTL: How to Choose",url:"/ftl-vs-ltl/",semana:"Sem 1-2",kw:"8,100/mes",estado:"pending"},
+            {titulo:"What is a Freight Broker?",url:"/what-is-a-freight-broker/",semana:"Sem 4-5",kw:"40,500/mes",estado:"pending"},
+            {titulo:"Cross-Border Freight USA-Mexico",url:"/cross-border-shipping-usa-mexico/",semana:"Sem 6-8",kw:"Alta intención",estado:"pending"},
+            {titulo:"Drayage Costs and Rates 2026",url:"/drayage-rates/",semana:"Sem 8-10",kw:"1,600/mes",estado:"pending"},
+            {titulo:"LTL Freight Class Guide",url:"/ltl-freight-class/",semana:"Sem 10-12",kw:"3,200/mes",estado:"pending"},
+          ].map(c=>`
+          <div style="padding:9px 0;border-bottom:1px solid var(--border2)">
+            <div style="font-size:13px;font-weight:700">${c.titulo}</div>
+            <div style="display:flex;gap:10px;margin-top:4px;font-size:11.5px;color:var(--muted)">
+              <span>🔗 ${c.url}</span><span>📅 ${c.semana}</span><span>📊 ${c.kw}</span>
+            </div>
+          </div>`).join('')}
+        </div>
+        <div class="card">
+          <div class="sec-label" style="margin-top:0">Mix de Contenido LinkedIn</div>
+          ${[["40%","Educativo","Cómo funciona LTL, tips de drayage, cross-border guide"],["30%","Industria","Supply chain news, nearshoring, tendencias de flete"],["20%","DGL","Servicios, ventajas, diferenciadores, equipo"],["10%","Social Proof","Casos de éxito, partnerships, momentos del equipo"]].map(m=>`
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--border2)">
+            <div style="font-size:18px;font-weight:900;color:var(--navy);min-width:40px">${m[0]}</div>
+            <div><div style="font-size:13px;font-weight:700">${m[1]}</div><div style="font-size:12px;color:var(--muted)">${m[2]}</div></div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+
   </div><!-- /content -->
 </div><!-- /main -->
+</div><!-- /app-body -->
 
 <script>
 // ─── DATA ───────────────────────────────────────────────────────────────────
@@ -1212,7 +1572,7 @@ function renderSEO(){
     </div>`;
 }
 
-// ─── TABS & NAVIGATION ───────────────────────────────────────────────────────
+// ─── TABS ────────────────────────────────────────────────────────────────────
 
 function setupTabs(tabsId, prefix){
   const tabEls=document.getElementById(tabsId).querySelectorAll('.tab');
@@ -1226,22 +1586,94 @@ function setupTabs(tabsId, prefix){
   });
 }
 
-const sectionTitles={
-  dashboard:"Dashboard",procesos:"Procesos de Marketing",herramientas:"Stack de Herramientas",
-  kpis:"KPIs & Métricas",automatizaciones:"Automatizaciones",ia:"IA Aplicada",
-  equipo:"Equipo & RACI",entregables:"Entregables Mensuales",calendario:"Calendario de Contenido",seo:"AI SEO Tracker"
-};
+// ─── NAVIGATION ──────────────────────────────────────────────────────────────
 
-document.querySelectorAll('.nav-item').forEach(item=>{
-  item.addEventListener('click',()=>{
-    const sec=item.dataset.section;
-    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-    item.classList.add('active');
-    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-    document.getElementById(sec).classList.add('active');
-    document.getElementById('topbar-title').textContent=sectionTitles[sec];
-  });
+function navigateTo(sec){
+  if(!sec||!document.getElementById(sec)) return;
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(sec).classList.add('active');
+  document.querySelectorAll('.nav-item,.nav-sub-item').forEach(n=>n.classList.remove('active'));
+  const ni=document.querySelector(`.nav-item[data-section="${sec}"]`);
+  if(ni) ni.classList.add('active');
+  const si=document.querySelector(`.nav-sub-item[data-section="${sec}"]`);
+  if(si) si.classList.add('active');
+}
+
+document.querySelectorAll('.nav-item[data-section]').forEach(item=>{
+  item.addEventListener('click',()=>navigateTo(item.dataset.section));
 });
+document.querySelectorAll('.nav-sub-item[data-section]').forEach(item=>{
+  item.addEventListener('click',()=>navigateTo(item.dataset.section));
+});
+
+// Collapsible Planeación
+document.getElementById('toggle-planeacion').addEventListener('click',()=>{
+  document.getElementById('sub-planeacion').classList.toggle('open');
+  document.getElementById('arr-planeacion').classList.toggle('open');
+});
+
+// ─── DATE & GREETING ─────────────────────────────────────────────────────────
+
+(function(){
+  const now=new Date();
+  const opts={weekday:'long',year:'numeric',month:'long',day:'numeric'};
+  const dateEl=document.getElementById('tn-date');
+  if(dateEl) dateEl.textContent=now.toLocaleDateString('es-ES',opts);
+  const h=now.getHours();
+  const g=h<12?'Buenos días':h<18?'Buenas tardes':'Buenas noches';
+  const gEl=document.getElementById('dash-greeting');
+  if(gEl) gEl.textContent=`${g}, Cristian 👋`;
+  const wn=Math.ceil((now.getDate()+new Date(now.getFullYear(),now.getMonth(),1).getDay())/7);
+  const mn=now.toLocaleDateString('es-ES',{month:'long'});
+  const dEl=document.getElementById('dash-datestr');
+  if(dEl) dEl.textContent=`Resumen ejecutivo — Semana ${wn}, ${mn.charAt(0).toUpperCase()+mn.slice(1)} ${now.getFullYear()}`;
+})();
+
+// ─── CHARTS ──────────────────────────────────────────────────────────────────
+
+function initCharts(){
+  // Pipeline & Revenue — last 12 months
+  const months=['Ago','Sep','Oct','Nov','Dic','Ene','Feb','Mar','Abr','May','Jun','Jul'];
+  const pipelineData=[290,310,320,340,360,370,390,410,430,450,470,690];
+  const revenueData=[180,200,210,230,240,250,270,285,300,320,350,530];
+  const ctxP=document.getElementById('chartPipeline');
+  if(ctxP){
+    new Chart(ctxP,{
+      type:'line',
+      data:{
+        labels:months,
+        datasets:[
+          {label:'Pipeline',data:pipelineData,borderColor:'#05035C',backgroundColor:'rgba(5,3,92,0.06)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'#05035C',borderWidth:2},
+          {label:'Revenue Cerrado',data:revenueData,borderColor:'#77B82A',backgroundColor:'rgba(119,184,42,0.08)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'#77B82A',borderWidth:2}
+        ]
+      },
+      options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:11}}},y:{grid:{color:'#F3F4F6'},ticks:{font:{size:11},callback:v=>v+'K'}}}}
+    });
+  }
+
+  // Mix de Canales — donut
+  const channels=[
+    {label:'LinkedIn Ads',val:28,color:'#05035C'},
+    {label:'Email Marketing',val:18,color:'#77B82A'},
+    {label:'Referidos',val:10,color:'#22C55E'},
+    {label:'SEO Orgánico',val:22,color:'#3B82F6'},
+    {label:'Google Ads',val:15,color:'#F59E0B'},
+    {label:'Outbound',val:7,color:'#A855F7'},
+  ];
+  const ctxC=document.getElementById('chartChannels');
+  if(ctxC){
+    new Chart(ctxC,{
+      type:'doughnut',
+      data:{
+        labels:channels.map(c=>c.label),
+        datasets:[{data:channels.map(c=>c.val),backgroundColor:channels.map(c=>c.color),borderWidth:2,borderColor:'#fff',hoverOffset:4}]
+      },
+      options:{responsive:true,maintainAspectRatio:true,cutout:'60%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw}%`}}}}
+    });
+    const leg=document.getElementById('channel-legend');
+    if(leg) leg.innerHTML=channels.map(c=>`<div style="display:flex;align-items:center;gap:4px;font-size:10.5px;color:#667085"><div style="width:8px;height:8px;border-radius:50%;background:${c.color};flex-shrink:0"></div>${c.label} ${c.val}%</div>`).join('');
+  }
+}
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 
@@ -1255,6 +1687,8 @@ renderTeam();
 renderDeliverables();
 renderCalendar();
 renderSEO();
+if(typeof Chart!=='undefined') initCharts();
+else window.addEventListener('load',initCharts);
 
 </script>
 </body>
