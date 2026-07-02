@@ -1,1 +1,2250 @@
-test-clipboard-123
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DGL Marketing OS</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#05035C;--navy2:#0A0875;--navy3:rgba(5,3,92,0.07);
+  --green:#77B82A;--green2:#5E9220;--green3:rgba(119,184,42,0.12);
+  --bg:#F4F5FA;--white:#fff;
+  --text:#1A1B3C;--muted:#6B7280;--light:#9CA3AF;
+  --border:#E5E7EB;--border2:#F3F4F6;
+  --red:#EF4444;--amber:#F59E0B;--blue:#3B82F6;
+  --sw:248px;--sw-collapsed:72px;
+  --shadow:0 1px 2px rgba(16,24,40,.04);--shadow-md:0 4px 16px rgba(16,24,40,.08);
+}
+[data-theme="dark"]{
+  --navy:#6C6BFF;--navy2:#8180FF;--navy3:rgba(108,107,255,0.14);
+  --green:#8BD645;--green2:#77B82A;--green3:rgba(139,214,69,0.14);
+  --bg:#0B0C14;--white:#151626;
+  --text:#EDEEFB;--muted:#9799B8;--light:#63658A;
+  --border:#262842;--border2:#1D1E33;
+  --red:#F87171;--amber:#FBBF24;--blue:#60A5FA;
+}
+[data-theme="dark"] body{background:var(--bg)}
+[data-theme="dark"] .card,[data-theme="dark"] .kcard,[data-theme="dark"] .chart-card,[data-theme="dark"] .tcard,[data-theme="dark"] .acard,[data-theme="dark"] .aicard,[data-theme="dark"] .pcard,[data-theme="dark"] .pdetail,[data-theme="dark"] .team-card,[data-theme="dark"] .promptcard,[data-theme="dark"] .doccard,[data-theme="dark"] .campcard,[data-theme="dark"] .chatbox{background:var(--white)}
+[data-theme="dark"] .topbar{background:var(--white)}
+[data-theme="dark"] .ktable th{background:var(--bg)}
+[data-theme="dark"] .tag{background:var(--bg)}
+[data-theme="dark"] .sidebar{background:#07070F}
+[data-theme="dark"] .tn-search input,[data-theme="dark"] .sb-search input{color:#fff}
+* { transition:background-color .25s ease, border-color .25s ease, color .25s ease; }
+body{font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden;font-size:14px}
+
+/* SIDEBAR */
+.sidebar{width:var(--sw);background:var(--navy);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sb-logo{padding:20px 16px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sb-logo-top{display:flex;align-items:center;gap:8px}
+.logo-badge{background:var(--green);color:#fff;font-weight:800;font-size:15px;padding:5px 10px;border-radius:7px;letter-spacing:.3px}
+.logo-text{color:#fff;font-weight:700;font-size:13px}
+.logo-sub{color:rgba(255,255,255,.35);font-size:10px;text-transform:uppercase;letter-spacing:1.5px;margin-top:6px}
+.sb-nav{padding:10px 8px;flex:1}
+.nav-label{color:rgba(255,255,255,.25);font-size:10px;text-transform:uppercase;letter-spacing:1.5px;padding:10px 10px 4px;font-weight:700}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,.6);font-size:13px;font-weight:500;transition:all .15s;margin-bottom:1px;user-select:none}
+.nav-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9)}
+.nav-item.active{background:rgba(119,184,42,.18);color:#77B82A;font-weight:600}
+.nav-icon{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.nav-pill{margin-left:auto;background:var(--green);color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px}
+.sb-footer{padding:14px 16px;border-top:1px solid rgba(255,255,255,.1)}
+.user-row{display:flex;align-items:center;gap:10px}
+.user-av{width:34px;height:34px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff;flex-shrink:0}
+.user-name{color:rgba(255,255,255,.85);font-size:12px;font-weight:700}
+.user-role{color:rgba(255,255,255,.38);font-size:10.5px}
+.sb-version{color:rgba(255,255,255,.2);font-size:10px;text-align:center;padding:8px 0 0}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 28px;height:54px;display:flex;align-items:center;gap:14px;flex-shrink:0}
+.topbar-title{font-size:15px;font-weight:800;color:var(--text);flex:1}
+.topbar-updated{font-size:11px;color:var(--light);background:var(--bg);padding:4px 10px;border-radius:20px;border:1px solid var(--border)}
+.content{flex:1;overflow-y:auto;padding:28px}
+
+/* SECTIONS */
+.section{display:none}.section.active{display:block}
+.pg-title{font-size:21px;font-weight:800;color:var(--text);margin-bottom:3px}
+.pg-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.sec-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:24px 0 10px}
+
+/* GRID */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media(max-width:1280px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(2,1fr)}}
+
+/* CARDS */
+.card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:20px}
+.card-sm{padding:16px}
+
+/* METRIC CARDS */
+.kcard{background:#fff;border-radius:12px;border:1px solid var(--border);padding:20px;position:relative;overflow:hidden}
+.kcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--green)}
+.kcard.blue::before{background:var(--blue)}.kcard.amber::before{background:var(--amber)}.kcard.navy::before{background:var(--navy)}.kcard.red::before{background:var(--red)}
+.kcard-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:8px}
+.kcard-val{font-size:30px;font-weight:800;color:var(--text);line-height:1;margin-bottom:5px}
+.kcard-sub{font-size:12px;color:var(--muted)}
+.kcard-trend{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;margin-top:6px}
+.tup{background:#ECFDF5;color:#059669}.tdown{background:#FEF2F2;color:#DC2626}.tneutral{background:var(--bg);color:var(--muted)}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+.b-active{background:#ECFDF5;color:#059669}
+.b-progress{background:#EFF6FF;color:#2563EB}
+.b-pending{background:#FFFBEB;color:#D97706}
+.b-paused{background:var(--border2);color:var(--muted)}
+.b-live{background:#ECFDF5;color:#059669}
+.b-risk{background:#FEF2F2;color:#DC2626}
+.b-navy{background:var(--navy3);color:var(--navy)}
+
+/* TAGS */
+.tag{display:inline-block;padding:2px 8px;background:var(--bg);border:1px solid var(--border);border-radius:4px;font-size:11px;color:var(--muted);font-weight:500}
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+
+/* PROGRESS */
+.pbar{height:6px;background:var(--border);border-radius:99px;overflow:hidden;margin-top:6px}
+.pfill{height:100%;border-radius:99px;background:var(--green);transition:width .4s}
+.pfill.w{background:var(--amber)}.pfill.d{background:var(--red)}.pfill.b{background:var(--blue)}
+.phead{display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px}
+
+/* TABS */
+.tabs{display:flex;gap:2px;border-bottom:2px solid var(--border);margin-bottom:20px}
+.tab{padding:8px 14px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;border-radius:4px 4px 0 0;transition:all .15s;white-space:nowrap}
+.tab:hover{color:var(--navy)}.tab.active{color:var(--navy);border-bottom-color:var(--navy)}
+.tab-pane{display:none}.tab-pane.active{display:block}
+
+/* PROCESS CARDS */
+.pcard{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px 20px;cursor:pointer;transition:all .18s;margin-bottom:10px}
+.pcard:hover{border-color:var(--navy);box-shadow:0 3px 12px rgba(5,3,92,.08)}
+.pcard.open{border-color:var(--green);border-bottom-left-radius:0;border-bottom-right-radius:0}
+.pcard-h{display:flex;align-items:flex-start;gap:12px}
+.pnum{width:28px;height:28px;background:var(--navy);color:#fff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+.pname{font-size:14px;font-weight:700;margin-bottom:2px}
+.pdesc{font-size:12.5px;color:var(--muted);line-height:1.5}
+.pmeta{display:flex;gap:16px;margin:10px 0 0;font-size:11.5px;color:var(--muted);flex-wrap:wrap}
+.pmeta span{display:flex;align-items:center;gap:3px}
+.pdetail{display:none;background:#fff;border:1px solid var(--green);border-top:none;border-radius:0 0 12px 12px;padding:20px;margin-bottom:10px}
+.pdetail.open{display:block}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.dblock label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);display:block;margin-bottom:5px}
+.dblock p{font-size:13px;color:var(--text);line-height:1.5}
+.steps{list-style:none;counter-reset:s}
+.steps li{counter-increment:s;display:flex;gap:10px;font-size:13px;line-height:1.5;padding:7px 0;border-bottom:1px solid var(--border2);align-items:flex-start}
+.steps li:last-child{border:none}
+.steps li::before{content:counter(s);min-width:22px;height:22px;background:var(--navy);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px}
+.connected{display:flex;flex-wrap:wrap;gap:6px}
+.clink{background:var(--navy3);color:var(--navy);border:1px solid rgba(5,3,92,.15);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.clink:hover{background:var(--navy);color:#fff}
+
+/* TOOL CARDS */
+.tcard{background:#fff;border:1px solid var(--border);border-radius:10px;padding:15px;display:flex;gap:12px;align-items:flex-start;transition:all .18s}
+.tcard:hover{border-color:var(--navy);box-shadow:0 2px 8px rgba(5,3,92,.07)}
+.ticon{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;flex-shrink:0;color:#fff}
+.tname{font-size:13.5px;font-weight:700;margin-bottom:2px}
+.tpurpose{font-size:12px;color:var(--muted);line-height:1.4;margin-bottom:8px}
+.ttier{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:4px;display:inline-block}
+.t-free{background:#ECFDF5;color:#059669}.t-paid{background:#EFF6FF;color:#2563EB}.t-partial{background:#FFFBEB;color:#D97706}
+
+/* KPI TABLE */
+.ktable{width:100%;border-collapse:collapse}
+.ktable th{text-align:left;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--border);background:var(--bg)}
+.ktable td{padding:11px 12px;border-bottom:1px solid var(--border2);vertical-align:middle}
+.ktable tr:last-child td{border:none}
+.ktable tr:hover td{background:var(--bg)}
+.kn{font-weight:600;color:var(--text)}.kt{color:var(--muted);font-size:12.5px}.kv{font-weight:800;font-size:14px}
+.ksource{font-size:11px;color:var(--light)}
+
+/* AUTO CARDS */
+.acard{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;transition:all .2s}
+.acard:hover{box-shadow:0 2px 12px rgba(5,3,92,.08)}
+.aflow{display:flex;align-items:center;gap:6px;margin:10px 0;flex-wrap:wrap}
+.astep{padding:5px 10px;border-radius:6px;font-size:11.5px;font-weight:600;border:1px solid}
+.astep.trigger{border-color:var(--navy);background:var(--navy3);color:var(--navy)}
+.astep.action{border-color:var(--green);background:var(--green3);color:var(--green2)}
+.astep.result{border-color:var(--blue);background:#EFF6FF;color:#2563EB}
+.arr{color:var(--light);font-size:12px}
+
+/* AI CARDS */
+.aicard{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;transition:all .2s}
+.aicard:hover{border-color:var(--navy)}
+.aitool{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;margin-bottom:10px}
+.claude{background:#FEF3C7;color:#92400E}
+.chatgpt{background:#ECFDF5;color:#065F46}
+.perplexity{background:#F0F9FF;color:#0C4A6E}
+
+/* SEO TRACKER */
+.seo-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border2)}
+.seo-check{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;font-weight:800}
+.sc-done{background:#ECFDF5;color:#059669}
+.sc-partial{background:#FFFBEB;color:#D97706}
+.sc-no{background:var(--border2);color:var(--light)}
+.seo-title{font-size:13px;font-weight:600;flex:1}
+.seo-note{font-size:11.5px;color:var(--muted)}
+
+/* CALENDAR */
+.cal{display:grid;grid-template-columns:repeat(7,1fr);border:1px solid var(--border);border-radius:10px;overflow:hidden;gap:1px;background:var(--border)}
+.cal-h{background:var(--navy);color:rgba(255,255,255,.7);text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:8px 4px}
+.cal-d{background:#fff;padding:5px;min-height:78px}
+.cal-dn{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:3px}
+.cal-d.today .cal-dn{background:var(--navy);color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px}
+.cal-d.other .cal-dn{color:var(--border)}
+.ev{padding:2px 4px;border-radius:3px;font-size:9.5px;font-weight:600;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev-blog{background:rgba(5,3,92,.08);color:#05035C}
+.ev-li{background:rgba(10,102,194,.1);color:#0A66C2}
+.ev-email{background:rgba(119,184,42,.12);color:#5E9220}
+.ev-report{background:rgba(239,68,68,.1);color:#DC2626}
+.ev-seo{background:rgba(245,158,11,.12);color:#B45309}
+.ev-camp{background:rgba(139,92,246,.1);color:#7C3AED}
+
+/* TEAM */
+.team-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center;max-width:280px}
+.team-av{width:72px;height:72px;background:linear-gradient(135deg,var(--navy),#1a18a0);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:24px;color:#fff;margin:0 auto 14px;border:3px solid var(--green)}
+.team-name{font-size:16px;font-weight:800;margin-bottom:3px}
+.team-role{font-size:12.5px;color:var(--muted);margin-bottom:12px}
+.team-stat{display:flex;justify-content:space-around;border-top:1px solid var(--border);padding-top:14px;margin-top:14px}
+.tstat-v{font-size:18px;font-weight:800;color:var(--navy)}
+.tstat-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+
+/* RACI */
+.raci{width:100%;border-collapse:collapse;font-size:12.5px}
+.raci th{background:var(--navy);color:rgba(255,255,255,.8);padding:9px 10px;text-align:center;font-size:11px;font-weight:700}
+.raci th:first-child{text-align:left;width:40%}
+.raci td{padding:9px 10px;border-bottom:1px solid var(--border2);text-align:center}
+.raci td:first-child{text-align:left;font-weight:600}
+.raci tr:hover td{background:var(--bg)}
+.R{color:var(--navy);font-weight:900}.A{color:var(--green2);font-weight:800}.C{color:var(--blue);font-weight:700}.I{color:var(--light)}
+
+/* DELIVERABLES */
+.deli-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border2)}
+.deli-cb{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:10px}
+.deli-cb.done{background:var(--green);border-color:var(--green);color:#fff}
+.deli-text{flex:1;font-size:13px}
+.deli-due{font-size:11px;color:var(--muted)}
+.deli-type{font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px}
+
+/* BOXES */
+.ibox{background:var(--navy3);border:1px solid rgba(5,3,92,.15);border-left:3px solid var(--navy);border-radius:6px;padding:12px 14px;font-size:13px;line-height:1.6;margin-bottom:16px}
+.wbox{background:#FFFBEB;border:1px solid #FDE68A;border-left:3px solid var(--amber);border-radius:6px;padding:12px 14px;font-size:13px;color:#92400E;line-height:1.6;margin-bottom:16px}
+.sbox{background:#ECFDF5;border:1px solid #A7F3D0;border-left:3px solid var(--green);border-radius:6px;padding:12px 14px;font-size:13px;color:#065F46;line-height:1.6;margin-bottom:16px}
+
+/* MISC */
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+.divider{height:1px;background:var(--border);margin:20px 0}
+.flex{display:flex;gap:12px;align-items:center}
+.flex-sb{display:flex;justify-content:space-between;align-items:center}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.pulse{animation:pulse 2s infinite}
+
+/* TOP NAV */
+html,body{height:100%}
+body{display:flex;flex-direction:column;overflow:hidden}
+.topnav{height:58px;background:var(--navy);display:flex;align-items:center;padding:0;flex-shrink:0;border-bottom:2px solid var(--green);z-index:200}
+.tn-brand{width:248px;display:flex;align-items:center;gap:10px;padding:0 16px;flex-shrink:0;border-right:1px solid rgba(255,255,255,.08)}
+.tn-logo{background:var(--green);color:#fff;font-weight:900;font-size:13px;padding:5px 10px;border-radius:7px;letter-spacing:.5px;flex-shrink:0}
+.tn-titles .tn-title{color:#fff;font-weight:800;font-size:13px;line-height:1.2}
+.tn-titles .tn-sub{color:rgba(255,255,255,.35);font-size:10px}
+.tn-center{flex:1;display:flex;justify-content:center;padding:0 20px}
+.tn-search{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:7px 14px;display:flex;align-items:center;gap:8px;width:380px;max-width:100%}
+.tn-search-ph{color:rgba(255,255,255,.35);font-size:12.5px;flex:1}
+.tn-kbd{background:rgba(255,255,255,.1);color:rgba(255,255,255,.3);font-size:10px;padding:1px 5px;border-radius:3px;font-family:monospace}
+.tn-right{display:flex;align-items:center;gap:12px;padding-right:20px;flex-shrink:0}
+.tn-date{color:rgba(255,255,255,.55);font-size:12px;white-space:nowrap}
+.tn-bell{position:relative;color:rgba(255,255,255,.6);font-size:17px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.tn-badge{position:absolute;top:1px;right:1px;background:#EF4444;color:#fff;font-size:8px;font-weight:900;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--navy)}
+.tn-avatar{width:32px;height:32px;background:var(--green);color:#fff;font-weight:800;font-size:12px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tn-uname{color:rgba(255,255,255,.8);font-size:13px;font-weight:600}
+
+/* APP BODY */
+.app-body{display:flex;flex:1;overflow:hidden}
+
+/* UPDATED SIDEBAR */
+.sidebar{background:#04024A}
+.sb-search{padding:10px;border-bottom:1px solid rgba(255,255,255,.06)}
+.sb-search input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:7px 12px;color:rgba(255,255,255,.7);font-size:12px;outline:none;font-family:inherit}
+.sb-search input::placeholder{color:rgba(255,255,255,.3)}
+.nav-arr{margin-left:auto;color:rgba(255,255,255,.25);font-size:10px;transition:transform .2s;display:inline-block}
+.nav-arr.open{transform:rotate(90deg)}
+.nav-sub{overflow:hidden;max-height:0;transition:max-height .25s ease}
+.nav-sub.open{max-height:300px}
+.nav-sub-item{display:flex;align-items:center;padding:6px 10px 6px 36px;border-radius:7px;cursor:pointer;color:rgba(255,255,255,.38);font-size:12px;transition:all .15s;margin-bottom:1px}
+.nav-sub-item:hover{background:rgba(255,255,255,.05);color:rgba(255,255,255,.75)}
+.nav-sub-item.active{color:#77B82A;background:rgba(119,184,42,.08);font-weight:600}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
+.btn-outline{background:#fff;border:1px solid var(--border);color:var(--text)}
+.btn-outline:hover{border-color:var(--navy)}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:hover{background:var(--navy2)}
+
+/* CHART CONTAINERS */
+.chart-row{display:grid;grid-template-columns:1.7fr 1fr;gap:16px;margin-bottom:20px}
+@media(max-width:1100px){.chart-row{grid-template-columns:1fr}}
+.chart-card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:20px}
+.chart-title{font-size:14px;font-weight:700;margin-bottom:3px}
+.chart-sub{font-size:11px;color:var(--muted);margin-bottom:14px}
+.chart-legend{display:flex;gap:14px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--muted)}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.channel-legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.channel-item{display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--muted)}
+.channel-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ─── V2.1 ADDITIONS ─────────────────────────────────────────────── */
+
+/* SIDEBAR COLLAPSE */
+.sidebar{transition:width .22s ease;position:relative}
+.sidebar.collapsed{width:var(--sw-collapsed)}
+.tn-brand{transition:width .22s ease}
+.tn-brand.collapsed{width:var(--sw-collapsed)}
+.sb-collapse-btn{position:absolute;top:14px;right:-11px;width:22px;height:22px;background:var(--navy);border:2px solid var(--bg);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;z-index:50;transition:transform .2s}
+.sidebar.collapsed .sb-collapse-btn{transform:rotate(180deg)}
+.sidebar.collapsed .nav-label,.sidebar.collapsed .logo-text,.sidebar.collapsed .logo-sub,.sidebar.collapsed .sb-search,.sidebar.collapsed .nav-item span:not(.nav-icon),.sidebar.collapsed .nav-arr,.sidebar.collapsed .nav-sub,.sidebar.collapsed .user-name,.sidebar.collapsed .user-role,.sidebar.collapsed .sb-version,.sidebar.collapsed .nav-pill{display:none}
+.sidebar.collapsed .nav-item{justify-content:center}
+.sidebar.collapsed .user-row{justify-content:center}
+.sidebar.collapsed .nav-item{position:relative}
+.sidebar.collapsed .nav-item:hover::after{content:attr(data-tip);position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);background:var(--navy);color:#fff;padding:5px 10px;border-radius:6px;font-size:11.5px;white-space:nowrap;z-index:60;box-shadow:var(--shadow-md)}
+
+/* THEME TOGGLE */
+.tn-theme{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:4px 4px;cursor:pointer;width:52px;height:26px;position:relative}
+.tn-theme-dot{width:18px;height:18px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:10px;transition:transform .25s ease;transform:translateX(0)}
+[data-theme="dark"] .tn-theme-dot{transform:translateX(24px)}
+
+/* ANIMATIONS */
+@keyframes fadeSlideIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.section.active{animation:fadeSlideIn .32s cubic-bezier(.22,.61,.36,1)}
+.kcard,.card,.chart-card,.tcard,.pcard,.acard,.aicard,.team-card,.promptcard,.doccard,.campcard{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.kcard:hover,.chart-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.nav-item,.nav-sub-item{transition:background-color .15s ease,color .15s ease,padding-left .15s ease}
+.nav-item:hover{padding-left:13px}
+@keyframes spinIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+.modal-panel{animation:spinIn .18s ease}
+.btn{transition:transform .12s ease,background .15s ease}
+.btn:active{transform:scale(.96)}
+
+/* GLOBAL SEARCH MODAL */
+.search-overlay{display:none;position:fixed;inset:0;background:rgba(5,3,20,.55);z-index:900;align-items:flex-start;justify-content:center;padding-top:10vh;backdrop-filter:blur(2px)}
+.search-overlay.open{display:flex}
+.modal-panel{background:var(--white,#fff);width:600px;max-width:92vw;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.35);overflow:hidden;max-height:70vh;display:flex;flex-direction:column}
+.modal-input-row{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border)}
+.modal-input-row input{flex:1;border:none;outline:none;font-size:15px;background:transparent;color:var(--text);font-family:inherit}
+.modal-results{overflow-y:auto;padding:8px}
+.modal-result{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;cursor:pointer}
+.modal-result:hover,.modal-result.sel{background:var(--navy3)}
+.modal-result-icon{width:32px;height:32px;border-radius:8px;background:var(--navy3);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.modal-result-title{font-size:13.5px;font-weight:600}
+.modal-result-cat{font-size:11px;color:var(--muted)}
+.modal-empty{padding:30px;text-align:center;color:var(--muted);font-size:13px}
+
+/* KNOWLEDGE / DOCS / PROMPTS / CAMPAIGNS */
+.doccard,.promptcard,.campcard{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px}
+.doc-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;flex-shrink:0}
+.promptcard{display:flex;flex-direction:column;gap:8px}
+.prompt-cat{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--navy);background:var(--navy3);padding:2px 8px;border-radius:20px;display:inline-block;width:fit-content}
+.prompt-text{font-size:12.5px;color:var(--muted);line-height:1.55;background:var(--bg);border-radius:8px;padding:10px 12px;font-family:ui-monospace,monospace}
+.copy-btn{align-self:flex-end;font-size:11px;font-weight:700;color:var(--navy);background:none;border:1px solid var(--border);padding:4px 10px;border-radius:6px;cursor:pointer}
+.copy-btn:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+.campcard{border-left:4px solid var(--green)}
+.camp-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+
+/* CLAUDE AI CHAT PANEL */
+.chatbox{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;height:520px}
+.chat-head{background:var(--navy);color:#fff;padding:14px 18px;display:flex;align-items:center;gap:10px;font-weight:700;font-size:13.5px}
+.chat-msgs{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px}
+.msg{max-width:78%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.5}
+.msg.user{align-self:flex-end;background:var(--navy);color:#fff;border-bottom-right-radius:3px}
+.msg.ai{align-self:flex-start;background:var(--bg);color:var(--text);border-bottom-left-radius:3px}
+.chat-suggest{display:flex;flex-wrap:wrap;gap:6px;padding:0 18px 14px}
+.chip{font-size:11.5px;padding:5px 11px;background:var(--navy3);color:var(--navy);border-radius:20px;cursor:pointer;border:1px solid transparent;font-weight:600}
+.chip:hover{border-color:var(--navy)}
+.chat-input-row{border-top:1px solid var(--border);padding:12px 14px;display:flex;gap:8px}
+.chat-input-row input{flex:1;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;outline:none;background:var(--bg);color:var(--text)}
+
+/* CRM MARKETING */
+.stage-col{background:var(--bg);border-radius:10px;padding:10px;min-height:200px}
+.stage-head{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:10px;display:flex;justify-content:space-between}
+.lead-card{background:#fff;border:1px solid var(--border);border-radius:9px;padding:10px 12px;margin-bottom:8px;font-size:12.5px;cursor:grab}
+.lead-name{font-weight:700;margin-bottom:3px}
+.lead-meta{color:var(--muted);font-size:11px}
+
+/* EXEC PANEL */
+.exec-hero{background:linear-gradient(135deg,var(--navy),#1a18a0);border-radius:16px;padding:28px 30px;color:#fff;position:relative;overflow:hidden}
+.exec-hero::after{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;background:rgba(119,184,42,.18);border-radius:50%}
+.exec-big{font-size:34px;font-weight:900}
+.exec-tag{font-size:11px;opacity:.7;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+
+.badge-live{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;color:var(--green2);background:var(--green3);padding:2px 8px;border-radius:20px}
+.badge-live::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green2);animation:pulse 1.6s infinite}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<header class="topnav">
+  <div class="tn-brand" id="tn-brand">
+    <div class="tn-logo">DGL</div>
+    <div class="tn-titles">
+      <div class="tn-title">Marketing OS</div>
+      <div class="tn-sub">DGL Freight Broker · 3PL</div>
+    </div>
+  </div>
+  <div class="tn-center">
+    <div class="tn-search" onclick="openSearch()" style="cursor:pointer">
+      <span style="color:rgba(255,255,255,.4);font-size:13px">🔍</span>
+      <div class="tn-search-ph">Buscar campañas, leads, procesos, prompts...</div>
+      <div class="tn-kbd">⌘K</div>
+    </div>
+  </div>
+  <div class="tn-right">
+    <div class="tn-theme" onclick="toggleTheme()" title="Cambiar modo oscuro/claro"><div class="tn-theme-dot" id="theme-dot">☀️</div></div>
+    <div class="tn-date" id="tn-date"></div>
+    <div class="tn-bell">🔔<span class="tn-badge">5</span></div>
+    <div class="tn-avatar">CS</div>
+    <div class="tn-uname">Cristian</div>
+  </div>
+</header>
+
+<!-- GLOBAL SEARCH MODAL -->
+<div class="search-overlay" id="search-overlay" onclick="if(event.target===this)closeSearch()">
+  <div class="modal-panel">
+    <div class="modal-input-row">
+      <span style="font-size:16px">🔍</span>
+      <input type="text" id="search-input" placeholder="Buscar en todo el sistema: procesos, KPIs, prompts, campañas, leads..." oninput="runSearch(this.value)">
+      <span style="font-size:11px;color:var(--muted);background:var(--bg);padding:3px 8px;border-radius:5px">ESC</span>
+    </div>
+    <div class="modal-results" id="search-results"></div>
+  </div>
+</div>
+
+<div class="app-body">
+
+<aside class="sidebar" id="sidebar">
+  <div class="sb-collapse-btn" onclick="toggleSidebar()">◀</div>
+  <div class="sb-search">
+    <input type="text" placeholder="🔍  Buscar..." onfocus="openSearch()" readonly>
+  </div>
+  <nav class="sb-nav">
+    <div class="nav-label">Principal</div>
+    <div class="nav-item active" data-section="dashboard" data-tip="Dashboard"><span class="nav-icon">⚡</span> Dashboard <span class="nav-pill">5</span></div>
+    <div class="nav-item" data-section="ejecutivo" data-tip="Panel Ejecutivo"><span class="nav-icon">🏛️</span> Panel Ejecutivo</div>
+
+    <div class="nav-label">Estrategia</div>
+    <div class="nav-item" id="toggle-planeacion" data-tip="Planeación"><span class="nav-icon">🎯</span> Planeación <span class="nav-arr" id="arr-planeacion">▶</span></div>
+    <div class="nav-sub" id="sub-planeacion">
+      <div class="nav-sub-item" data-section="objetivos">Objetivos SMART</div>
+      <div class="nav-sub-item" data-section="okrs">OKRs</div>
+      <div class="nav-sub-item" data-section="buyer">Buyer Persona / ICP</div>
+      <div class="nav-sub-item" data-section="journey">Customer Journey</div>
+      <div class="nav-sub-item" data-section="foda">FODA + Competencia</div>
+      <div class="nav-sub-item" data-section="benchmark">Benchmark</div>
+    </div>
+
+    <div class="nav-label">Comercial</div>
+    <div class="nav-item" data-section="crm" data-tip="CRM Marketing"><span class="nav-icon">🧲</span> CRM Marketing</div>
+    <div class="nav-item" data-section="campanas" data-tip="Centro de Campañas"><span class="nav-icon">🚀</span> Centro de Campañas <span class="nav-pill">6</span></div>
+
+    <div class="nav-label">Operación</div>
+    <div class="nav-item" data-section="procesos" data-tip="Procesos"><span class="nav-icon">🔄</span> Procesos <span class="nav-pill">10</span></div>
+    <div class="nav-item" data-section="herramientas" data-tip="Herramientas"><span class="nav-icon">🛠️</span> Herramientas</div>
+    <div class="nav-item" data-section="kpis" data-tip="KPIs"><span class="nav-icon">📊</span> KPIs & Métricas</div>
+    <div class="nav-item" data-section="automatizaciones" data-tip="Automatizaciones"><span class="nav-icon">⚙️</span> Automatizaciones</div>
+    <div class="nav-item" data-section="ia" data-tip="IA Aplicada"><span class="nav-icon">✨</span> IA Aplicada</div>
+
+    <div class="nav-label">Inteligencia Artificial</div>
+    <div class="nav-item" data-section="claude-panel" data-tip="Claude AI"><span class="nav-icon">🤖</span> Panel Claude AI</div>
+    <div class="nav-item" data-section="prompts" data-tip="Prompts"><span class="nav-icon">💬</span> Biblioteca de Prompts</div>
+    <div class="nav-item" data-section="seo" data-tip="GEO / AI SEO"><span class="nav-icon">🌐</span> GEO / AI SEO</div>
+
+    <div class="nav-label">Marca y Digital</div>
+    <div class="nav-item" data-section="branding" data-tip="Branding"><span class="nav-icon">🎨</span> Branding</div>
+    <div class="nav-item" data-section="sem" data-tip="SEO & SEM"><span class="nav-icon">🔍</span> SEO & SEM</div>
+    <div class="nav-item" data-section="mktg" data-tip="Marketing"><span class="nav-icon">📢</span> Marketing</div>
+    <div class="nav-item" data-section="contenido" data-tip="Contenido"><span class="nav-icon">📝</span> Contenido</div>
+
+    <div class="nav-label">Conocimiento</div>
+    <div class="nav-item" data-section="knowledge" data-tip="Centro de Conocimiento"><span class="nav-icon">🎓</span> Centro de Conocimiento</div>
+    <div class="nav-item" data-section="docs" data-tip="Biblioteca Documental"><span class="nav-icon">🗂️</span> Biblioteca Documental</div>
+
+    <div class="nav-label">Estructura</div>
+    <div class="nav-item" data-section="equipo" data-tip="Equipo"><span class="nav-icon">👤</span> Equipo & RACI</div>
+    <div class="nav-item" data-section="entregables" data-tip="Entregables"><span class="nav-icon">📋</span> Entregables</div>
+    <div class="nav-item" data-section="calendario" data-tip="Calendario"><span class="nav-icon">📅</span> Calendario</div>
+  </nav>
+  <div class="sb-footer">
+    <div class="user-row">
+      <div class="user-av">CS</div>
+      <div>
+        <div class="user-name">Cristian Serna</div>
+        <div class="user-role">Director de Marketing</div>
+      </div>
+    </div>
+    <div class="sb-version">v2.1 · Julio 2026</div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="content">
+
+    <!-- ===================== DASHBOARD ===================== -->
+    <div class="section active" id="dashboard">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">
+        <div>
+          <div class="pg-title" id="dash-greeting">Buenos días, Cristian 👋</div>
+          <div class="pg-sub" id="dash-datestr" style="margin-bottom:0">Resumen ejecutivo — Semana 26, Julio 2026</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-outline">⬇ Exportar</button>
+          <button class="btn btn-primary">+ Nueva Campaña</button>
+        </div>
+      </div>
+
+      <div class="g4" style="margin-bottom:20px">
+        <div class="kcard">
+          <div class="kcard-label">RFQs del Mes</div>
+          <div class="kcard-val">24</div>
+          <div class="kcard-sub">Meta: 30 RFQs/mes</div>
+          <div class="phead" style="margin-top:10px"><span style="font-size:11px;color:var(--muted)">80% de meta</span></div>
+          <div class="pbar"><div class="pfill w" style="width:80%"></div></div>
+        </div>
+        <div class="kcard blue">
+          <div class="kcard-label">Leads Activos CRM</div>
+          <div class="kcard-val">187</div>
+          <div class="kcard-sub">+12 esta semana</div>
+          <div class="kcard-trend tup">↑ +6.8%</div>
+        </div>
+        <div class="kcard navy">
+          <div class="kcard-label">Sesiones Web / Mes</div>
+          <div class="kcard-val">3,240</div>
+          <div class="kcard-sub">Meta: 5,000 sesiones</div>
+          <div class="pbar" style="margin-top:10px"><div class="pfill b" style="width:65%"></div></div>
+        </div>
+        <div class="kcard">
+          <div class="kcard-label">Score AI SEO</div>
+          <div class="kcard-val">6<span style="font-size:16px;font-weight:500;color:var(--muted)">/15</span></div>
+          <div class="kcard-sub">+5 puntos esta sesión</div>
+          <div class="kcard-trend tup">↑ Mejorado hoy</div>
+        </div>
+      </div>
+
+      <!-- CHARTS -->
+      <div class="chart-row">
+        <div class="chart-card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
+            <div>
+              <div class="chart-title">Pipeline & Revenue</div>
+              <div class="chart-sub">Últimos 12 meses — USD</div>
+            </div>
+            <div class="chart-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:#05035C"></div> Pipeline</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#77B82A"></div> Revenue Cerrado</div>
+            </div>
+          </div>
+          <canvas id="chartPipeline" height="160"></canvas>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Mix de Canales</div>
+          <div class="chart-sub">% participación por canal</div>
+          <canvas id="chartChannels" height="180"></canvas>
+          <div class="channel-legend" id="channel-legend"></div>
+        </div>
+      </div>
+
+      <div class="g2">
+        <div>
+          <div class="sec-label" style="margin-top:0">Estado del Departamento</div>
+          <div class="card">
+            <div id="dept-health"></div>
+          </div>
+        </div>
+        <div>
+          <div class="sec-label" style="margin-top:0">Próximas Prioridades</div>
+          <div class="card">
+            <div id="priorities"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-label">Implementaciones Recientes</div>
+      <div class="card">
+        <div id="recent-activity"></div>
+      </div>
+    </div>
+
+    <!-- ===================== PROCESOS ===================== -->
+    <div class="section" id="procesos">
+      <div class="pg-title">Procesos de Marketing</div>
+      <div class="pg-sub">10 procesos documentados · Cada proceso incluye flujo, herramientas, responsable y KPIs</div>
+      <div class="ibox">💡 Haz clic en cualquier proceso para ver la documentación completa, el flujo paso a paso y las conexiones con otros procesos.</div>
+      <div id="process-list"></div>
+    </div>
+
+    <!-- ===================== HERRAMIENTAS ===================== -->
+    <div class="section" id="herramientas">
+      <div class="pg-title">Stack de Herramientas</div>
+      <div class="pg-sub">Todas las herramientas activas del departamento, organizadas por categoría</div>
+      <div class="tabs" id="tool-tabs"></div>
+      <div id="tool-content"></div>
+    </div>
+
+    <!-- ===================== KPIs ===================== -->
+    <div class="section" id="kpis">
+      <div class="pg-title">KPIs & Métricas</div>
+      <div class="pg-sub">Indicadores de rendimiento del departamento · Medición mensual</div>
+      <div class="tabs" id="kpi-tabs"></div>
+      <div id="kpi-content"></div>
+    </div>
+
+    <!-- ===================== AUTOMATIZACIONES ===================== -->
+    <div class="section" id="automatizaciones">
+      <div class="pg-title">Automatizaciones</div>
+      <div class="pg-sub">Flujos automáticos activos y planeados que reducen trabajo manual y aumentan conversiones</div>
+      <div id="auto-list"></div>
+    </div>
+
+    <!-- ===================== IA ===================== -->
+    <div class="section" id="ia">
+      <div class="pg-title">IA Aplicada en Marketing</div>
+      <div class="pg-sub">Casos de uso activos de Inteligencia Artificial dentro del departamento</div>
+      <div id="ai-list"></div>
+    </div>
+
+    <!-- ===================== EQUIPO ===================== -->
+    <div class="section" id="equipo">
+      <div class="pg-title">Equipo & Responsabilidades</div>
+      <div class="pg-sub">Estructura del departamento y matriz RACI por proceso</div>
+      <div id="team-content"></div>
+    </div>
+
+    <!-- ===================== ENTREGABLES ===================== -->
+    <div class="section" id="entregables">
+      <div class="pg-title">Entregables Mensuales</div>
+      <div class="pg-sub">Lista de entregables recurrentes · Junio 2026</div>
+      <div id="deliverables-content"></div>
+    </div>
+
+    <!-- ===================== CALENDARIO ===================== -->
+    <div class="section" id="calendario">
+      <div class="pg-title">Calendario de Contenido</div>
+      <div class="pg-sub">Junio – Julio 2026 · Vista mensual de contenido y campañas</div>
+      <div id="calendar-content"></div>
+    </div>
+
+    <!-- ===================== SEO / GEO ===================== -->
+    <div class="section" id="seo">
+      <div class="pg-title">GEO / AI SEO Tracker</div>
+      <div class="pg-sub">Generative Engine Optimization — visibilidad de dglus.com en motores de IA (ChatGPT, Perplexity, Google AI Overviews)</div>
+      <div id="seo-content"></div>
+    </div>
+
+    <!-- ===================== PANEL EJECUTIVO ===================== -->
+    <div class="section" id="ejecutivo">
+      <div class="pg-title">Panel Ejecutivo — Dirección General</div>
+      <div class="pg-sub">Resumen de alto nivel para toma de decisiones · Julio 2026</div>
+      <div id="exec-content"></div>
+    </div>
+
+    <!-- ===================== CRM MARKETING ===================== -->
+    <div class="section" id="crm">
+      <div class="pg-title">CRM Marketing</div>
+      <div class="pg-sub">Pipeline comercial generado por Marketing · Vista Kanban en tiempo real</div>
+      <div id="crm-content"></div>
+    </div>
+
+    <!-- ===================== CENTRO DE CAMPAÑAS ===================== -->
+    <div class="section" id="campanas">
+      <div class="pg-title">Centro de Campañas</div>
+      <div class="pg-sub">Campañas activas, planeadas y finalizadas — clasificadas por objetivo comercial</div>
+      <div id="campaigns-content"></div>
+    </div>
+
+    <!-- ===================== PANEL CLAUDE AI ===================== -->
+    <div class="section" id="claude-panel">
+      <div class="pg-title">Panel Claude AI</div>
+      <div class="pg-sub">Asistente estratégico integrado — consulta casos de uso reales del equipo</div>
+      <div id="claude-content"></div>
+    </div>
+
+    <!-- ===================== BIBLIOTECA DE PROMPTS ===================== -->
+    <div class="section" id="prompts">
+      <div class="pg-title">Biblioteca de Prompts</div>
+      <div class="pg-sub">Prompts probados y optimizados para el trabajo diario del departamento</div>
+      <div class="tabs" id="prompt-tabs"></div>
+      <div id="prompt-content"></div>
+    </div>
+
+    <!-- ===================== CENTRO DE CONOCIMIENTO ===================== -->
+    <div class="section" id="knowledge">
+      <div class="pg-title">Centro de Conocimiento</div>
+      <div class="pg-sub">Guías internas y mejores prácticas de Freight Brokerage & Marketing B2B</div>
+      <div id="knowledge-content"></div>
+    </div>
+
+    <!-- ===================== BIBLIOTECA DOCUMENTAL ===================== -->
+    <div class="section" id="docs">
+      <div class="pg-title">Biblioteca Documental</div>
+      <div class="pg-sub">Plantillas, brand assets y documentos maestros del departamento</div>
+      <div id="docs-content"></div>
+    </div>
+
+    <!-- NUEVAS SECCIONES -->
+    <div class="section" id="objetivos">
+      <div class="pg-title">Objetivos SMART — Q3 2026</div>
+      <div class="pg-sub">Julio · Agosto · Septiembre 2026</div>
+      <div class="g2">
+        <div class="card"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--green2);margin-bottom:12px">Generación de Demanda</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px">Alcanzar 30 RFQs/mes promedio en Q3</div>
+          <div style="font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:12px">Incrementar la generación de solicitudes de cotización de 24 actuales a 30 mensuales mediante contenido SEO + outbound + email.</div>
+          <div style="font-size:12px;color:var(--muted)">📅 Sep 30, 2026 · 📊 CRM · 👤 Cristian S.</div></div>
+        <div class="card"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:12px">Posicionamiento Digital</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px">Subir AI SEO score de 6/15 a 12/15</div>
+          <div style="font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:12px">Publicar 5 páginas de contenido AI-optimizado, subir llms.txt, resolver Cloudflare y obtener la primera citación verificada en Perplexity.</div>
+          <div style="font-size:12px;color:var(--muted)">📅 Sep 30, 2026 · 📊 Auditoría Manual · 👤 Cristian S.</div></div>
+        <div class="card"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--amber);margin-bottom:12px">Tráfico Orgánico</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px">Llegar a 5,000 sesiones orgánicas/mes</div>
+          <div style="font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:12px">Aumentar de 3,240 a 5,000 sesiones mensuales publicando 2 páginas de alto volumen (FTL vs LTL + What is a Freight Broker).</div>
+          <div style="font-size:12px;color:var(--muted)">📅 Sep 30, 2026 · 📊 GA4 · 👤 Cristian S.</div></div>
+        <div class="card"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--red);margin-bottom:12px">Retención</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px">Reactivar 3 clientes inactivos en Q3</div>
+          <div style="font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:12px">Lanzar campaña de win-back en agosto para cuentas con +6 meses sin operaciones. Meta: 3 cuentas activas y al menos 1 operación cerrada.</div>
+          <div style="font-size:12px;color:var(--muted)">📅 Sep 30, 2026 · 📊 CRM · 👤 Ventas + Marketing</div></div>
+      </div>
+    </div>
+
+    <div class="section" id="okrs">
+      <div class="pg-title">OKRs — Q3 2026</div>
+      <div class="pg-sub">Objectives & Key Results · Julio–Septiembre 2026</div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="card">
+          <div style="font-size:15px;font-weight:800;color:var(--navy);margin-bottom:14px">O1 — Generar Demanda Calificada</div>
+          <div id="okr-o1"></div>
+        </div>
+        <div class="card">
+          <div style="font-size:15px;font-weight:800;color:var(--navy);margin-bottom:14px">O2 — Posicionamiento Digital y AI</div>
+          <div id="okr-o2"></div>
+        </div>
+        <div class="card">
+          <div style="font-size:15px;font-weight:800;color:var(--navy);margin-bottom:14px">O3 — Contenido y Social Media</div>
+          <div id="okr-o3"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="buyer">
+      <div class="pg-title">Buyer Persona / ICP</div>
+      <div class="pg-sub">Perfil del cliente ideal de DGL en el mercado norteamericano</div>
+      <div class="g3">
+        <div class="card">
+          <div style="width:48px;height:48px;background:var(--navy);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px">🏭</div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--green2);margin-bottom:6px">Primary ICP</div>
+          <div style="font-size:15px;font-weight:800;margin-bottom:4px">VP / Director de Logística</div>
+          <div style="font-size:12.5px;color:var(--muted);margin-bottom:12px">Importador o fabricante en USA con volumen de 50+ shipments/mes. Necesita un broker confiable para FTL, LTL e intermodal en USA y cross-border México.</div>
+          <div style="font-size:11.5px;color:var(--muted)">📍 Texas · Florida · California · Midwest<br>🏢 Revenue $10M–$500M · Industrias: Retail, Auto, Food</div>
+        </div>
+        <div class="card">
+          <div style="width:48px;height:48px;background:#0A66C2;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px">🚢</div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#2563EB;margin-bottom:6px">Secondary ICP</div>
+          <div style="font-size:15px;font-weight:800;margin-bottom:4px">Freight Forwarder Owner</div>
+          <div style="font-size:12.5px;color:var(--muted);margin-bottom:12px">Dueño de freight forwarder que necesita capacidad terrestre confiable para sus clientes importadores. Valora respuesta rápida, disponibilidad de trucks y visibilidad en tiempo real.</div>
+          <div style="font-size:11.5px;color:var(--muted)">📍 Miami · Los Angeles · Chicago · Houston<br>🏢 Pequeño-mediano FF · Volumen 20–200 containers/mes</div>
+        </div>
+        <div class="card">
+          <div style="width:48px;height:48px;background:#77B82A;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px">🌎</div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--green2);margin-bottom:6px">Tertiary ICP</div>
+          <div style="font-size:15px;font-weight:800;margin-bottom:4px">Operations Manager — Exportador Mexicano</div>
+          <div style="font-size:12.5px;color:var(--muted);margin-bottom:12px">Empresa mexicana que exporta a USA con necesidad de drayage, cross-border y distribución en territorio americano. Busca un broker que entienda pedimentos, pilotos y regulaciones fronterizas.</div>
+          <div style="font-size:11.5px;color:var(--muted)">📍 Monterrey · CDMX · Guadalajara · Tijuana<br>🏢 Maquiladoras, Agro, Automotive</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="journey">
+      <div class="pg-title">Customer Journey</div>
+      <div class="pg-sub">Mapa del recorrido del cliente desde awareness hasta fidelización</div>
+      <div class="card" style="overflow-x:auto">
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border-radius:8px;overflow:hidden;min-width:700px" id="journey-grid"></div>
+      </div>
+    </div>
+
+    <div class="section" id="foda">
+      <div class="pg-title">FODA + Competencia</div>
+      <div class="pg-sub">Análisis estratégico DGL vs mercado de freight brokerage en Norteamérica</div>
+      <div class="g2" style="margin-bottom:20px">
+        <div class="card"><div style="font-size:13px;font-weight:800;color:var(--green2);margin-bottom:10px">✅ Fortalezas</div><div id="foda-fortalezas"></div></div>
+        <div class="card"><div style="font-size:13px;font-weight:800;color:var(--red);margin-bottom:10px">⚠ Debilidades</div><div id="foda-debilidades"></div></div>
+        <div class="card"><div style="font-size:13px;font-weight:800;color:var(--blue);margin-bottom:10px">🚀 Oportunidades</div><div id="foda-oportunidades"></div></div>
+        <div class="card"><div style="font-size:13px;font-weight:800;color:var(--amber);margin-bottom:10px">🔴 Amenazas</div><div id="foda-amenazas"></div></div>
+      </div>
+    </div>
+
+    <div class="section" id="benchmark">
+      <div class="pg-title">Benchmark de Marketing</div>
+      <div class="pg-sub">Métricas DGL vs benchmarks de la industria B2B logistics</div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <table class="ktable">
+          <thead><tr><th>Métrica</th><th>DGL Actual</th><th>Benchmark B2B</th><th>Estado</th></tr></thead>
+          <tbody id="benchmark-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section" id="branding">
+      <div class="pg-title">Branding & Identidad Visual</div>
+      <div class="pg-sub">Manual de marca, colores, tipografía y lineamientos creativos DGL</div>
+      <div class="g2">
+        <div class="card">
+          <div class="sec-label" style="margin-top:0">Colores Corporativos</div>
+          <div style="display:flex;gap:12px;margin-bottom:20px">
+            <div style="flex:1;background:#05035C;border-radius:10px;padding:20px;text-align:center"><div style="color:#fff;font-weight:800;font-size:15px">#05035C</div><div style="color:rgba(255,255,255,.6);font-size:11px;margin-top:3px">Navy — Primario</div></div>
+            <div style="flex:1;background:#77B82A;border-radius:10px;padding:20px;text-align:center"><div style="color:#fff;font-weight:800;font-size:15px">#77B82A</div><div style="color:rgba(255,255,255,.8);font-size:11px;margin-top:3px">Green — Acento</div></div>
+            <div style="flex:1;background:#fff;border:2px solid var(--border);border-radius:10px;padding:20px;text-align:center"><div style="color:var(--navy);font-weight:800;font-size:15px">#FFFFFF</div><div style="color:var(--muted);font-size:11px;margin-top:3px">Blanco</div></div>
+          </div>
+          <div class="sec-label">Tipografía</div>
+          <div style="font-size:13px;color:var(--muted)">Fuente principal: <strong style="color:var(--text)">Inter / System UI</strong><br>Títulos: 800 weight · Cuerpo: 400–600 weight</div>
+        </div>
+        <div class="card">
+          <div class="sec-label" style="margin-top:0">Lineamientos de Voz</div>
+          <div style="display:flex;flex-direction:column;gap:8px" id="brand-voice"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="sem">
+      <div class="pg-title">SEO & SEM</div>
+      <div class="pg-sub">Estrategia de posicionamiento orgánico y paid search · dglus.com</div>
+      <div class="ibox">💡 DGL opera 100% con SEO orgánico. No hay presupuesto activo en Google Ads. El foco es contenido AI-optimizado para capturar demanda existente sin costo de clic.</div>
+      <div class="g2">
+        <div class="card">
+          <div class="sec-label" style="margin-top:0">Keywords Objetivo Q3</div>
+          <div id="sem-keywords"></div>
+        </div>
+        <div class="card">
+          <div class="sec-label" style="margin-top:0">Estado Técnico SEO</div>
+          <div id="sem-technical"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="mktg">
+      <div class="pg-title">Campañas de Marketing</div>
+      <div class="pg-sub">Campañas activas y planificadas — Q3 2026</div>
+      <div style="display:flex;flex-direction:column;gap:12px" id="mktg-campaigns"></div>
+    </div>
+
+    <div class="section" id="contenido">
+      <div class="pg-title">Estrategia de Contenido</div>
+      <div class="pg-sub">Plan editorial Q3 2026 · Contenido AI-optimizado para freight brokerage</div>
+      <div class="ibox">🎯 Todo el contenido se diseña con doble propósito: posicionar en Google Y ser citado por ChatGPT, Perplexity y Google AI Overviews. Estructura: definición extractable + tabla comparativa + FAQ con schema.</div>
+      <div class="g2" id="contenido-grid"></div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app-body -->
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+
+const processes = [
+  {
+    num:1, name:"Generación de Demanda Inbound", status:"active",
+    desc:"Atracción de leads calificados a través de contenido SEO, landing pages y formularios de cotización en el sitio web.",
+    owner:"Cristian Serna", freq:"Continuo", kpi:"RFQs/mes, sesiones orgánicas",
+    tools:["WordPress","RankMath","GA4","MailPoet","Claude AI"],
+    input:"Brief de contenido, keywords objetivo, datos del mercado",
+    output:"Leads orgánicos, RFQs desde formulario web, suscriptores",
+    steps:[
+      "Investigar keywords con intención comercial alta (FTL, LTL, drayage, cross-border)",
+      "Crear brief de contenido con Claude AI — estructura, ángulo, datos a incluir",
+      "Redactar página/post optimizado para AI Overviews (bloques extractables, tablas, FAQ)",
+      "Publicar en WordPress con Elementor, configurar schema JSON-LD en functions.php",
+      "Optimizar meta title/description en RankMath, enviar a indexación",
+      "Monitorear posicionamiento en GSC y menciones en AI search mensualmente",
+      "Actualizar contenido cada 6 meses para mantener freshness signal"
+    ],
+    connected:["Content Marketing","SEO y AI SEO","CRM y Pipeline"]
+  },
+  {
+    num:2, name:"Outbound Prospecting", status:"active",
+    desc:"Identificación y contacto proactivo con importadores, exportadores, manufacturers y freight forwarders que necesitan capacidad terrestre en Norteamérica.",
+    owner:"Cristian Serna + Equipo de Ventas", freq:"Semanal",
+    kpi:"Tasa de respuesta, reuniones agendadas, RFQs generados",
+    tools:["CRM","LinkedIn","Email","Claude AI"],
+    input:"Lista de empresas objetivo, datos de importación/exportación, perfil ICP",
+    output:"Correos enviados, respuestas recibidas, calls agendadas",
+    steps:[
+      "Definir segmento objetivo semanal (importadores Miami, manufacturers Texas, freight forwarders NY)",
+      "Investigar cada empresa con Claude AI — modelo de negocio, necesidades logísticas, oportunidad DGL",
+      "Redactar email ultra-personalizado con cold-email skill — máx 150 palabras",
+      "Cargar secuencia en CRM con 3 touchpoints (D1, D5, D12)",
+      "Seguimiento telefónico en D3 para leads de alto valor",
+      "Registrar resultado en CRM y clasificar: Hot/Warm/Cold/No fit",
+      "Revisar métricas de respuesta semanal y ajustar mensaje si <15% open rate"
+    ],
+    connected:["CRM y Pipeline","Email Marketing","Sales Enablement"]
+  },
+  {
+    num:3, name:"Content Marketing", status:"progress",
+    desc:"Creación de contenido educativo y comparativo que posiciona a DGL como autoridad en freight brokerage y que puede ser citado por motores de IA.",
+    owner:"Cristian Serna", freq:"2–4 piezas/mes",
+    kpi:"Tráfico orgánico, time on page, leads desde contenido, citaciones AI",
+    tools:["Claude AI","WordPress","Elementor","Canva","RankMath"],
+    input:"Keyword research, temas de industria, preguntas frecuentes de clientes",
+    output:"Blog posts, landing pages, guías definitivas, comparativas",
+    steps:[
+      "Seleccionar tema con potencial AI + SEO: comparativas (FTL vs LTL), guías (What is a freight broker), precios (drayage rates)",
+      "Generar estructura con Claude AI — H1, H2s, bloques de definición, tablas, FAQ",
+      "Redactar con reglas de AI extractability: bloques 40-60 palabras, estadísticas con fuente, fecha visible",
+      "Diseñar gráficos/tablas comparativas en Canva para aumentar tiempo en página",
+      "Publicar en WordPress, agregar schema FAQPage al functions.php",
+      "Distribuir en LinkedIn y email como resumen",
+      "Monitorear en Perplexity y ChatGPT si la página empieza a ser citada"
+    ],
+    connected:["SEO y AI SEO","Social Media LinkedIn","Generación de Demanda Inbound"]
+  },
+  {
+    num:4, name:"Email Marketing / Lead Nurture", status:"active",
+    desc:"Comunicación segmentada con leads y clientes activos para avanzar en el embudo comercial, reactivar inactivos y construir relación de largo plazo.",
+    owner:"Cristian Serna", freq:"Semanal / Bi-semanal",
+    kpi:"Open rate >28%, CTR >3%, conversiones a RFQ",
+    tools:["MailPoet","CRM","Claude AI"],
+    input:"Listas segmentadas, triggers de comportamiento, ofertas y novedades",
+    output:"Emails enviados, clicks, leads calificados, reuniones agendadas",
+    steps:[
+      "Segmentar lista en CRM por industria, estado en pipeline y nivel de actividad",
+      "Definir objetivo del envío: nutrir, convertir, reactivar o informar",
+      "Redactar con Claude AI — subject line A/B, preheader, cuerpo orientado a valor, CTA único",
+      "Configurar en MailPoet con merge tags de personalización",
+      "Enviar en martes/miércoles 10–11am para máximo open rate B2B",
+      "Revisar métricas a 24h y 72h — open rate, CTR, replies, unsubscribes",
+      "Registrar leads que hicieron clic en CRM para seguimiento de ventas"
+    ],
+    connected:["CRM y Pipeline","Automatizaciones","Outbound Prospecting"]
+  },
+  {
+    num:5, name:"Gestión CRM y Pipeline", status:"active",
+    desc:"Administración del ciclo de vida de cada lead desde el primer contacto hasta el cierre, asegurando visibilidad total del pipeline comercial.",
+    owner:"Cristian Serna + Ventas", freq:"Diario",
+    kpi:"Pipeline value, lead velocity, conversión por etapa, accuracy del forecast",
+    tools:["CRM","Email","MailPoet"],
+    input:"Leads de todas las fuentes (inbound, outbound, referidos, redes)",
+    output:"Pipeline estructurado, forecast mensual, clientes activos en CRM",
+    steps:[
+      "Capturar todos los nuevos leads en CRM dentro de 24h con fuente y datos de empresa",
+      "Clasificar como MQL o SQL según criterios de calificación ICP",
+      "Asignar a etapa correcta del pipeline: Contacto → Calificado → Propuesta → Negociación → Cierre",
+      "Programar siguiente acción con fecha para cada lead activo",
+      "Depurar semanalmente: eliminar contactos duplicados, actualizar estados",
+      "Generar reporte de pipeline cada viernes para revisión con ventas",
+      "Revisar leads perdidos y activar secuencia de win-back a 30 días"
+    ],
+    connected:["Email Marketing","Outbound Prospecting","Reporting Ejecutivo"]
+  },
+  {
+    num:6, name:"SEO y AI SEO", status:"active",
+    desc:"Optimización del sitio web para aparecer en Google y ser citado por motores de inteligencia artificial como ChatGPT, Perplexity y Google AI Overviews.",
+    owner:"Cristian Serna", freq:"Semanal (optimización) / Mensual (revisión)",
+    kpi:"Keywords en top 10, sesiones orgánicas, AI visibility score, citaciones",
+    tools:["RankMath","GA4","GSC","Claude AI","WPCode","WordPress"],
+    input:"Keyword research, análisis de competidores, datos de GSC",
+    output:"Rankings mejorados, citaciones AI, tráfico orgánico calificado",
+    steps:[
+      "Revisar GSC semanalmente — impresiones, CTR, posición promedio por keyword",
+      "Identificar keywords en posición 8-20 con oportunidad de quick win",
+      "Optimizar página correspondiente: title tag, meta description, H1, contenido",
+      "Verificar schema markup en Google Rich Results Test",
+      "Monitorar AI visibility: buscar DGL en Perplexity, ChatGPT y Google AI Overviews",
+      "Actualizar llms.txt cuando se agreguen nuevos servicios o páginas",
+      "Publicar 1 página nueva de contenido AI-optimizado por mes"
+    ],
+    connected:["Content Marketing","Generación de Demanda Inbound","AI SEO Tracker"]
+  },
+  {
+    num:7, name:"Social Media B2B — LinkedIn", status:"active",
+    desc:"Presencia estratégica en LinkedIn para posicionar a DGL como referente en freight brokerage, generar conversaciones comerciales y construir audiencia de tomadores de decisión.",
+    owner:"Cristian Serna", freq:"3–4 posts/semana",
+    kpi:"Impresiones, engagement rate >3%, followers, leads desde LinkedIn",
+    tools:["LinkedIn","Canva","Claude AI"],
+    input:"Tendencias de industria, noticias de supply chain, contenido educativo, casos de éxito",
+    output:"Posts publicados, comentarios, DMs, leads calificados",
+    steps:[
+      "Planear 2 semanas de contenido adelantado con mix: 40% educativo, 30% industria, 20% DGL, 10% social proof",
+      "Redactar con Claude AI usando formato hook + valor + CTA suave",
+      "Diseñar visual en Canva (carrusel, infografía o imagen corporativa) con colores DGL",
+      "Publicar a las 8–9am o 12–1pm días laborales para máximo reach B2B",
+      "Responder todos los comentarios dentro de 2h de publicación (engagement boost)",
+      "Interactuar en posts de prospectos y clientes 15min/día",
+      "Revisar analytics semanalmente — top posts, crecimiento, leads generados"
+    ],
+    connected:["Content Marketing","Outbound Prospecting","Brand Management"]
+  },
+  {
+    num:8, name:"Reporting Ejecutivo Mensual", status:"active",
+    desc:"Reporte completo del desempeño del departamento con KPIs, análisis de tendencias, wins/misses y recomendaciones para el mes siguiente.",
+    owner:"Cristian Serna", freq:"Mensual (último viernes del mes)",
+    kpi:"Entregado a tiempo, datos exactos, recomendaciones implementadas",
+    tools:["GA4","GSC","CRM","LinkedIn Analytics","Claude AI"],
+    input:"Datos de todas las plataformas del mes, objetivos establecidos",
+    output:"Reporte ejecutivo PDF/doc, dashboard de KPIs, plan de acción mes siguiente",
+    steps:[
+      "Extraer datos de GA4, GSC, CRM, LinkedIn y email el día 28-30 de cada mes",
+      "Calcular KPIs vs metas: RFQs, pipeline, tráfico, email metrics, social",
+      "Identificar top 3 wins y top 3 áreas de mejora con datos de soporte",
+      "Redactar análisis ejecutivo con Claude AI — máx 2 páginas, orientado a decisiones",
+      "Incluir recomendaciones concretas para el mes siguiente con owner y fecha",
+      "Presentar en reunión de dirección o distribuir por email",
+      "Archivar en carpeta de reportes para benchmark histórico"
+    ],
+    connected:["Gestión CRM","KPIs & Métricas","Automatizaciones"]
+  },
+  {
+    num:9, name:"Reactivación de Clientes Inactivos", status:"pending",
+    desc:"Campaña trimestral para recuperar clientes con más de 6 meses sin actividad, mediante secuencias de email personalizadas y contacto directo.",
+    owner:"Cristian Serna + Ventas", freq:"Trimestral",
+    kpi:"Tasa de reactivación >5%, revenue recuperado, reuniones agendadas",
+    tools:["CRM","MailPoet","Claude AI","Email"],
+    input:"Lista de clientes inactivos (sin operaciones en 6+ meses)",
+    output:"Clientes reactivados, oportunidades en pipeline, revenue recuperado",
+    steps:[
+      "Extraer del CRM lista de cuentas sin movimiento en 6+ meses",
+      "Investigar con Claude AI por qué dejaron de operar y qué ha cambiado en su industria",
+      "Redactar email ultra-personalizado haciendo referencia a su historial con DGL",
+      "Lanzar secuencia de 3 emails en 15 días: valor → caso de éxito → oferta directa",
+      "Seguimiento telefónico para cuentas con >$50K de histórico",
+      "Actualizar CRM con resultado: reactivado, no interesado, no localizable",
+      "Medir revenue recuperado vs costo de campaña para calcular ROI"
+    ],
+    connected:["Email Marketing","CRM y Pipeline","Sales Enablement"]
+  },
+  {
+    num:10, name:"Sales Enablement", status:"active",
+    desc:"Creación y mantenimiento de materiales que apoyan al equipo de ventas en cada etapa del ciclo comercial — desde primer contacto hasta cierre.",
+    owner:"Cristian Serna", freq:"On-demand + revisión trimestral",
+    kpi:"Materiales usados/semana, satisfacción del equipo de ventas, impacto en conversión",
+    tools:["Canva","Claude AI","WordPress","Google Slides"],
+    input:"Necesidades del equipo de ventas, objeciones frecuentes, casos de éxito",
+    output:"Pitch decks, one-pagers, case studies, battlecards, propuestas",
+    steps:[
+      "Reunión mensual con ventas para identificar necesidades de materiales y objeciones recientes",
+      "Priorizar por frecuencia de uso e impacto en conversión",
+      "Redactar contenido con Claude AI — orientado a valor para el cliente, no a features de DGL",
+      "Diseñar en Canva con identidad visual DGL (navy #05035C + verde #77B82A)",
+      "Revisar con ventas antes de publicar — validar lenguaje, datos y casos",
+      "Publicar en carpeta compartida accesible para todo el equipo",
+      "Actualizar trimestralmente o cuando cambian rates, servicios o competidores"
+    ],
+    connected:["Outbound Prospecting","Brand Management","Reporting Ejecutivo"]
+  }
+];
+
+const tools = {
+  "CMS & Web":[
+    {icon:"W",color:"#21759B",name:"WordPress",tier:"free",purpose:"CMS principal del sitio dglus.com. Gestión de páginas, posts, SEO y plugins."},
+    {icon:"E",color:"#92003B",name:"Elementor",tier:"partial",purpose:"Page builder visual para landing pages y páginas de servicio. Versión Free activa."},
+    {icon:"R",color:"#ff4f57",name:"WP Rocket",tier:"paid",purpose:"Plugin de caché y optimización de velocidad. Mejora Core Web Vitals y UX."},
+    {icon:"S",color:"#ff6900",name:"ShortPixel",tier:"partial",purpose:"Compresión y optimización de imágenes. Reduce peso del sitio sin perder calidad."},
+    {icon:"W",color:"#474747",name:"WPCode",tier:"partial",purpose:"Gestión de snippets de código PHP/HTML/CSS. Versión free activa para snippets globales."},
+    {icon:"☁",color:"#F48120",name:"Cloudflare",tier:"free",purpose:"CDN, DNS, WAF y seguridad. Gestiona también el robots.txt a nivel de infraestructura."},
+  ],
+  "SEO & Analytics":[
+    {icon:"R",color:"#05035C",name:"RankMath SEO",tier:"partial",purpose:"Plugin SEO para WordPress. Gestiona meta tags, sitemap, schema y robots.txt editor."},
+    {icon:"G",color:"#E37400",name:"Google Analytics 4",tier:"free",purpose:"Análisis de tráfico web, comportamiento de usuarios, conversiones y atribución de canales."},
+    {icon:"G",color:"#4285F4",name:"Google Search Console",tier:"free",purpose:"Rendimiento en búsqueda orgánica: impresiones, CTR, posición y keywords. Fuente primaria de SEO."},
+  ],
+  "Email":[
+    {icon:"M",color:"#77B82A",name:"MailPoet",tier:"partial",purpose:"Plugin WordPress para email marketing. Gestión de listas, campañas y automatizaciones de nurture."},
+  ],
+  "IA & Productividad":[
+    {icon:"✦",color:"#CC785C",name:"Claude (Anthropic)",tier:"paid",purpose:"IA principal del departamento. Estrategia, redacción, análisis, investigación, SEO, cold email."},
+    {icon:"⚡",color:"#10A37F",name:"ChatGPT (OpenAI)",tier:"paid",purpose:"Variaciones de copy, brainstorming, revisión de contenido y soporte en automatización de textos."},
+    {icon:"◈",color:"#1FB8CD",name:"Perplexity AI",tier:"partial",purpose:"Investigación de mercado en tiempo real, análisis de competidores, tendencias de industria."},
+  ],
+  "Diseño":[
+    {icon:"C",color:"#7D2AE8",name:"Canva",tier:"partial",purpose:"Diseño de materiales de marketing: posts LinkedIn, infografías, one-pagers, presentaciones y banners."},
+  ],
+  "Social Media":[
+    {icon:"in",color:"#0A66C2",name:"LinkedIn",tier:"free",purpose:"Canal B2B principal. Publicación de contenido, prospecting, networking y generación de leads."},
+    {icon:"f",color:"#1877F2",name:"Facebook",tier:"free",purpose:"Presencia de marca y remarketing. Menor prioridad vs LinkedIn para perfil B2B de DGL."},
+    {icon:"✦",color:"#E1306C",name:"Instagram",tier:"free",purpose:"Branding visual y cultura corporativa. Contenido de equipo, operaciones y brand awareness."},
+  ],
+  "CRM":[
+    {icon:"C",color:"#05035C",name:"CRM",tier:"paid",purpose:"Gestión del pipeline comercial, seguimiento de leads, historial de clientes y automatizaciones. Eje central del proceso de ventas."},
+  ]
+};
+
+const kpis = {
+  "Adquisición":[
+    {name:"RFQs generados / mes",target:"30",current:"24",pct:80,color:"w",owner:"Cristian S.",source:"CRM + Web Forms",trend:"▲ +4 vs mes anterior"},
+    {name:"Nuevas cuentas calificadas / mes",target:"5",current:"3",pct:60,color:"w",owner:"Ventas + Marketing",source:"CRM",trend:"→ Igual mes anterior"},
+    {name:"Tráfico orgánico / mes (sesiones)",target:"5,000",current:"3,240",pct:65,color:"b",owner:"Cristian S.",source:"GA4",trend:"▲ +8% vs mes anterior"},
+    {name:"Conversión web a lead (%)",target:"2.5%",current:"1.8%",pct:72,color:"w",owner:"Cristian S.",source:"GA4 + Forms",trend:"▲ Mejorada este mes"},
+    {name:"Costo por Lead (CPL)",target:"<$150",current:"$180",pct:75,color:"w",owner:"Cristian S.",source:"CRM + Ads",trend:"▼ Optimizando"},
+  ],
+  "Pipeline":[
+    {name:"MQLs / mes",target:"50",current:"38",pct:76,color:"b",owner:"Marketing",source:"CRM",trend:"▲ +5 vs mes anterior"},
+    {name:"SQLs / mes",target:"15",current:"11",pct:73,color:"b",owner:"Ventas",source:"CRM",trend:"▲ Mejorando"},
+    {name:"Pipeline generado por Marketing ($)",target:"$500,000",current:"$340,000",pct:68,color:"w",owner:"Marketing + Ventas",source:"CRM",trend:"▲ +$40K vs mes anterior"},
+    {name:"Lead-to-Meeting rate (%)",target:"20%",current:"15%",pct:75,color:"w",owner:"Ventas",source:"CRM",trend:"→ Estable"},
+    {name:"Tasa de cierre leads Marketing",target:"10%",current:"7%",pct:70,color:"w",owner:"Ventas",source:"CRM",trend:"▲ Creciendo"},
+  ],
+  "Email & Contenido":[
+    {name:"Email open rate (%)",target:">28%",current:"31%",pct:100,color:"",owner:"Cristian S.",source:"MailPoet",trend:"✓ Meta cumplida"},
+    {name:"Email CTR (%)",target:">3%",current:"3.8%",pct:100,color:"",owner:"Cristian S.",source:"MailPoet",trend:"✓ Meta cumplida"},
+    {name:"Piezas de contenido / mes",target:"4",current:"2",pct:50,color:"w",owner:"Cristian S.",source:"WordPress",trend:"↑ Building pipeline"},
+    {name:"Posts LinkedIn / mes",target:"16",current:"12",pct:75,color:"b",owner:"Cristian S.",source:"LinkedIn Analytics",trend:"▲ Mejorando ritmo"},
+    {name:"Engagement rate LinkedIn (%)",target:">3%",current:"2.4%",pct:80,color:"w",owner:"Cristian S.",source:"LinkedIn Analytics",trend:"▲ +0.4% este mes"},
+  ],
+  "AI SEO":[
+    {name:"Score AI SEO (criterios implementados)",target:"15/15",current:"6/15",pct:40,color:"b",owner:"Cristian S.",source:"Auditoría Manual",trend:"▲ +5 puntos hoy"},
+    {name:"Keywords en Top 10 (Google)",target:"20",current:"7",pct:35,color:"b",owner:"Cristian S.",source:"GSC",trend:"▲ Creciendo"},
+    {name:"Citaciones en Perplexity (queries clave)",target:"5+",current:"0",pct:5,color:"d",owner:"Cristian S.",source:"Monitoreo Manual",trend:"→ Recién iniciado"},
+    {name:"Citaciones en Google AI Overviews",target:"3+",current:"0",pct:5,color:"d",owner:"Cristian S.",source:"GSC + Manual",trend:"→ Recién iniciado"},
+    {name:"Páginas con schema FAQPage activo",target:"5",current:"1",pct:20,color:"b",owner:"Cristian S.",source:"Rich Results Test",trend:"▲ /faqs/ implementado hoy"},
+  ],
+  "Retención":[
+    {name:"Clientes inactivos reactivados / trim.",target:"5%",current:"2%",pct:40,color:"w",owner:"Ventas + Marketing",source:"CRM",trend:"→ Campaña pendiente Q3"},
+    {name:"Tasa de retención de clientes (%)",target:">80%",current:"74%",pct:93,color:"",owner:"Ventas",source:"CRM",trend:"→ Estable"},
+    {name:"NPS (Net Promoter Score)",target:">50",current:"N/A",pct:0,color:"d",owner:"Cristian S.",source:"Pendiente implementar",trend:"⚠ No medido aún"},
+  ]
+};
+
+const automations = [
+  {
+    name:"Secuencia Welcome — Nuevo Lead Web",
+    status:"active",
+    trigger:"Lead completa formulario en dglus.com",
+    action:"Secuencia 5 emails en 21 días (D1, D3, D7, D14, D21)",
+    result:"Lead calificado con contexto de DGL, listo para llamada de ventas",
+    tool:"MailPoet + CRM",
+    freq:"Trigger inmediato",
+    desc:"El lead recibe un email de bienvenida en menos de 5 minutos. La secuencia incluye: introducción DGL, casos de éxito, servicios específicos a su industria, precio estimado y CTA a agendar llamada."
+  },
+  {
+    name:"Re-engagement — Leads 60 días sin actividad",
+    status:"active",
+    trigger:"Lead en CRM sin interacción por 60 días",
+    action:"Secuencia 3 emails con ángulo diferente al original",
+    result:"Lead reactivado o marcado como Cold para limpieza",
+    tool:"CRM + MailPoet",
+    freq:"Automático, revisión semanal",
+    desc:"Cuando un lead lleva 60 días sin abrir emails ni interactuar, se activa una secuencia de reactivación. Ángulo: industria-específico, caso de uso nuevo, o cambio de precios del mercado."
+  },
+  {
+    name:"Seguimiento RFQ sin Respuesta — 72h",
+    status:"active",
+    trigger:"RFQ enviado, sin respuesta del cliente en 72 horas",
+    action:"Email automático de seguimiento + alerta en CRM para ventas",
+    result:"Recuperación de cotizaciones perdidas, tasa de conversión mejorada",
+    tool:"CRM + Email",
+    freq:"Trigger automático",
+    desc:"Uno de los flows de mayor ROI. Si una cotización no tiene respuesta en 72h, el sistema envía un email de seguimiento breve y marca la tarea en CRM para que ventas haga llamada."
+  },
+  {
+    name:"Alerta Cliente Inactivo — 6 Meses",
+    status:"active",
+    trigger:"Cliente con operaciones históricas, sin movimiento en 180 días",
+    action:"Alerta a ventas en CRM + ingreso a lista de reactivación Q3",
+    result:"Prevención de churn, pipeline de reactivación construido",
+    tool:"CRM",
+    freq:"Check mensual automático",
+    desc:"El CRM identifica automáticamente cuentas con historial de operaciones que llevan 6 meses sin actividad y genera alertas para que ventas intervenga antes de que el cliente migre a un competidor."
+  },
+  {
+    name:"Scoring Automático de Leads",
+    status:"progress",
+    trigger:"Lead realiza acción: abre email, visita pricing page, descarga recurso",
+    action:"Score del lead sube automáticamente; si supera umbral → SQL",
+    result:"Ventas contacta primero a los leads más calientes, optimiza tiempo",
+    tool:"CRM + MailPoet",
+    freq:"Tiempo real",
+    desc:"Cada acción del lead suma puntos: abrir email (+2), hacer clic (+5), visitar /contact/ (+10), solicitar cotización (+20). Al llegar a 30 puntos → clasificado como SQL con alerta a ventas."
+  },
+  {
+    name:"Programación de Contenido LinkedIn",
+    status:"active",
+    trigger:"Brief de contenido aprobado (2 semanas adelantado)",
+    action:"Posts programados con herramienta de scheduling de LinkedIn",
+    result:"Consistencia de publicación sin trabajo manual diario",
+    tool:"LinkedIn Native Scheduler + Canva",
+    freq:"Batch semanal (lunes)",
+    desc:"Cada lunes se programa el contenido de la semana siguiente. El proceso toma 2-3 horas semanales vs 30 min diarios interrumpidos. Permite publicar en horarios óptimos sin depender de estar disponible."
+  },
+  {
+    name:"Extracción de Datos para Reporte Mensual",
+    status:"pending",
+    trigger:"Día 28 de cada mes",
+    action:"Pull automático de GA4, GSC, CRM y LinkedIn Analytics",
+    result:"Dashboard prellenado para análisis ejecutivo, reduce tiempo de reporte 60%",
+    tool:"GA4 + GSC API + CRM + Claude AI",
+    freq:"Mensual",
+    desc:"En construcción. Objetivo: que el reporte mensual llegue pre-poblado con datos el día 28. Cristian solo tiene que analizar y redactar recomendaciones con Claude AI, no exportar datos manualmente."
+  },
+  {
+    name:"Win-back — Prospectos No Cerrados",
+    status:"pending",
+    trigger:"Oportunidad marcada como 'Perdida' en CRM",
+    action:"Ingreso automático a secuencia win-back de 30 días",
+    result:"Recuperación de 5-10% de oportunidades perdidas",
+    tool:"CRM + MailPoet",
+    freq:"Trigger automático",
+    desc:"Cuando ventas cierra una oportunidad como 'Perdida', el lead entra automáticamente a una secuencia de 30 días con mensajes de bajo compromiso. Objetivo: estar en el radar cuando el competidor falle."
+  }
+];
+
+const aiUseCases = [
+  {tool:"claude",name:"Estrategia y Estructura de Contenido",freq:"Semanal",
+   desc:"Generar briefs de contenido completos: H1, H2s, ángulo diferenciador, datos a incluir, preguntas FAQ, estructura de tablas. Incluye análisis de por qué el contenido ganará en AI Overviews.",
+   output:"Brief de contenido listo para redacción en 20 min vs 4 horas manual"},
+  {tool:"claude",name:"Redacción de Cold Emails Personalizados",freq:"2–3x/semana",
+   desc:"Investigar empresa prospecto → identificar necesidades logísticas → redactar email de 150 palabras ultra-personalizado con referencia específica al negocio del prospecto y cómo DGL genera valor.",
+   output:"Email con tasa de respuesta 3x mayor vs template genérico"},
+  {tool:"claude",name:"Análisis de Empresas Prospecto",freq:"Semanal",
+   desc:"Analizar modelo de negocio, operaciones logísticas, posibles lanes, necesidades de FTL/LTL/cross-border, oportunidades específicas para DGL. Input: nombre de empresa. Output: brief comercial de 1 página.",
+   output:"Brief con estrategia de acercamiento personalizada para cada prospecto"},
+  {tool:"claude",name:"Redacción de Posts LinkedIn",freq:"3–4x/semana",
+   desc:"Crear posts con estructura hook → valor → CTA. Tipos: educativo (cómo funciona LTL), industria (tendencias supply chain), social proof (casos de éxito sin nombre de cliente), noticias DGL.",
+   output:"Post listo para publicar con variaciones de hook para A/B testing"},
+  {tool:"claude",name:"Implementación AI SEO (Schema, llms.txt)",freq:"Mensual",
+   desc:"Generar código JSON-LD para FAQPage, Organization, Service. Crear y actualizar llms.txt, pricing.md. Revisar extractability del contenido. Auditar robots.txt y recomendar cambios.",
+   output:"Código implementable directamente en WordPress functions.php"},
+  {tool:"claude",name:"Análisis Ejecutivo y Reportes",freq:"Mensual",
+   desc:"Tomar datos raw de GA4, CRM, email y social → generar análisis narrativo ejecutivo con wins, misses, causas y recomendaciones accionables. Formato orientado a decisiones de negocio.",
+   output:"Reporte ejecutivo de 2 páginas en 30 min vs 4 horas manual"},
+  {tool:"perplexity",name:"Investigación de Mercado en Tiempo Real",freq:"Semanal",
+   desc:"Research de tendencias en freight market, análisis de movimientos de competidores (Echo, XPO, CH Robinson), precios de mercado, regulaciones cross-border Mexico-USA, novedades de industria.",
+   output:"Inteligencia competitiva actualizada para estrategia de contenido y ventas"},
+  {tool:"chatgpt",name:"Variaciones de Copy y A/B Testing",freq:"Semanal",
+   desc:"Generar 5-10 variaciones de subject lines de email, headlines de landing page, CTAs y hooks de LinkedIn para testing. Permite optimizar copy basado en datos vs intuición.",
+   output:"Set de variaciones listas para configurar en MailPoet o LinkedIn"},
+  {tool:"claude",name:"Creación de Materiales de Ventas",freq:"On-demand",
+   desc:"Redactar one-pagers, pitch decks, propuestas, battlecards vs competidores y FAQs de objeciones. Orientados al cliente (qué gana) no a DGL (qué hace). Lenguaje ejecutivo B2B.",
+   output:"Materiales listos para diseño en Canva, aceleran ciclo de ventas"},
+  {tool:"perplexity",name:"Research de Prospectos — Datos Públicos",freq:"2–3x/semana",
+   desc:"Antes de enviar cold email: buscar noticias recientes de la empresa, expansiones, problemas de supply chain declarados, movimientos ejecutivos. Permite personalización ultra-específica.",
+   output:"Contexto de 5-10 datos relevantes sobre el prospecto en 3 minutos vs 30 min manual"},
+];
+
+const teamData = {
+  member:{name:"Cristian Serna",role:"Director de Marketing",email:"cristian.serna@dglus.com",skills:["Marketing Estratégico B2B","SEO / AI SEO","Email Marketing","Diseño Gráfico","IA Aplicada","Negocios Internacionales","Logística & Freight"],processes:10,tools:18,kpis:19},
+  external:[
+    {name:"Freelance Diseñador",role:"Diseño gráfico on-demand",scope:"Piezas complejas Canva, branding, presentaciones ejecutivas"},
+    {name:"Desarrollador Web",role:"Soporte técnico WordPress",scope:"Actualizaciones PHP, bugs críticos, integraciones custom"},
+    {name:"Equipo de Ventas",role:"Colaboración en pipeline",scope:"Clasificación de leads, feedback de mercado, RFQs"}
+  ],
+  raci:[
+    {proc:"Generación Demanda Inbound",cs:"R/A",sales:"-",design:"C",dev:"C"},
+    {proc:"Outbound Prospecting",cs:"R/A",sales:"C",design:"-",dev:"-"},
+    {proc:"Content Marketing",cs:"R/A",sales:"I",design:"C",dev:"I"},
+    {proc:"Email Marketing / Nurture",cs:"R/A",sales:"I",design:"C",dev:"-"},
+    {proc:"Gestión CRM y Pipeline",cs:"A",sales:"R",design:"-",dev:"-"},
+    {proc:"SEO y AI SEO",cs:"R/A",sales:"-",design:"-",dev:"C"},
+    {proc:"Social Media LinkedIn",cs:"R/A",sales:"I",design:"C",dev:"-"},
+    {proc:"Reporting Ejecutivo",cs:"R/A",sales:"C",design:"-",dev:"-"},
+    {proc:"Reactivación de Clientes",cs:"A",sales:"R",design:"-",dev:"-"},
+    {proc:"Sales Enablement",cs:"R/A",sales:"C",design:"C",dev:"-"},
+  ]
+};
+
+const deliverables = [
+  {text:"Reporte ejecutivo mensual (KPIs + análisis + recomendaciones)",due:"Jul 31",type:"report",done:false},
+  {text:"Blog post 1 — FTL vs LTL: How to Choose the Right Mode",due:"Jul 11",type:"contenido",done:false},
+  {text:"Blog post 2 — What is a Freight Broker?",due:"Jul 25",type:"contenido",done:false},
+  {text:"12–16 posts LinkedIn (4/semana)",due:"Continuo",type:"social",done:false},
+  {text:"Campaña email — Segmento importadores Miami",due:"Jul 8",type:"email",done:false},
+  {text:"Campaña email — Nurture leads inactivos +60 días",due:"Jul 15",type:"email",done:false},
+  {text:"Optimizaciones SEO semanales (2 páginas/semana)",due:"Continuo",type:"seo",done:false},
+  {text:"Actualización CRM — depuración y segmentación Q3",due:"Jul 5",type:"crm",done:false},
+  {text:"One-pager servicios Cross-Border USA-Mexico (sales enablement)",due:"Jul 18",type:"sales",done:false},
+  {text:"Subir llms.txt y pricing.md al servidor (cPanel/FTP)",due:"Esta semana",type:"seo",done:false},
+  {text:"Fix Cloudflare — desactivar bloqueo AI bots",due:"Esta semana",type:"seo",done:false},
+  {text:"FAQPage schema en /faqs/ ✓ IMPLEMENTADO",due:"Jun 26",type:"seo",done:true},
+  {text:"Organization schema en homepage ✓ IMPLEMENTADO",due:"Jun 26",type:"seo",done:true},
+  {text:"robots.txt corregido (Allow AI bots) ✓ IMPLEMENTADO",due:"Jun 26",type:"seo",done:true},
+];
+
+const calendarEvents = {
+  1:{},2:{},3:{events:[{t:"ev-blog",l:"Blog: FTL vs LTL draft"}]},
+  4:{events:[{t:"ev-li",l:"LinkedIn: Drayage tips"}]},
+  5:{events:[{t:"ev-email",l:"Email: Importadores"}]},
+  7:{events:[{t:"ev-li",l:"LinkedIn: Cross-border"}]},
+  8:{events:[{t:"ev-seo",l:"SEO: GSC review"}]},
+  9:{events:[{t:"ev-li",l:"LinkedIn: FTL benefits"}]},
+  10:{events:[{t:"ev-camp",l:"Campaign: Nurture launch"}]},
+  11:{events:[{t:"ev-blog",l:"Blog: What is Freight Broker"}]},
+  12:{events:[{t:"ev-li",l:"LinkedIn: Industry news"}]},
+  14:{events:[{t:"ev-li",l:"LinkedIn: Warehousing"}]},
+  15:{events:[{t:"ev-email",l:"Email: Nurture D7"}]},
+  16:{events:[{t:"ev-seo",l:"SEO: Content update"}]},
+  17:{events:[{t:"ev-li",l:"LinkedIn: Cross-border steps"}]},
+  18:{events:[{t:"ev-blog",l:"Blog: Cross-Border Guide"}]},
+  21:{events:[{t:"ev-li",l:"LinkedIn: Freight class guide"}]},
+  22:{events:[{t:"ev-email",l:"Email: Win-back"}]},
+  24:{events:[{t:"ev-li",l:"LinkedIn: Q3 market outlook"}]},
+  25:{events:[{t:"ev-seo",l:"SEO: Schema audit"}]},
+  26:{events:[{t:"ev-report",l:"★ AI SEO Implementación"}]},
+  28:{events:[{t:"ev-li",l:"LinkedIn: DGL milestone"}]},
+  29:{events:[{t:"ev-seo",l:"SEO: AI visibility check"}]},
+  31:{events:[{t:"ev-report",l:"Reporte Mensual"}]},
+};
+
+const seoItems = [
+  {status:"done",title:"robots.txt permite GPTBot (ChatGPT Search)",note:"Implementado vía RankMath + Allow rules"},
+  {status:"done",title:"robots.txt permite ClaudeBot (Anthropic)",note:"Implementado vía RankMath + Allow rules"},
+  {status:"done",title:"robots.txt permite Google-Extended (Gemini/AI Overviews)",note:"Implementado vía RankMath + Allow rules"},
+  {status:"done",title:"robots.txt permite PerplexityBot",note:"Permitido por User-agent: * (default)"},
+  {status:"done",title:"FAQPage JSON-LD schema en /faqs/",note:"10 Q&As — Implementado en functions.php · LIVE"},
+  {status:"done",title:"Organization JSON-LD schema en homepage",note:"Datos completos DGL · Implementado en functions.php · LIVE"},
+  {status:"partial",title:"Cloudflare — desactivar bloqueo AI Scrapers",note:"⚠ Pendiente: ir a Cloudflare Dashboard → Security → Bots"},
+  {status:"no",title:"llms.txt en https://dglus.com/llms.txt",note:"Archivo listo en SEO_DGL/ — necesita subir vía FTP/cPanel"},
+  {status:"no",title:"pricing.md en https://dglus.com/pricing.md",note:"Archivo listo en SEO_DGL/ — necesita subir vía FTP/cPanel"},
+  {status:"no",title:"Página FTL vs LTL con contenido AI-optimizado",note:"Estructura lista en content-plan-ai-seo.md — Sem. 2-3"},
+  {status:"no",title:"Página What is a Freight Broker",note:"Estructura lista — Sem. 4-5"},
+  {status:"no",title:"Página Cross-Border USA-Mexico Guide",note:"Estructura lista — Sem. 6-8"},
+  {status:"no",title:"Estadísticas con fuente en todas las páginas clave",note:"Requiere actualización de páginas existentes"},
+  {status:"no",title:"Fecha de actualización visible en páginas de contenido",note:"Quick win — agregar a cada página de servicio"},
+  {status:"no",title:"Byline de autor en páginas de contenido",note:"Quick win — \"DGL Logistics Operations Team\""},
+];
+
+// ─── RENDER FUNCTIONS ────────────────────────────────────────────────────────
+
+function statusBadge(s){
+  const map={active:"b-active Active",progress:"b-progress En Progreso",pending:"b-pending Pendiente",paused:"b-paused Pausado",live:"b-live Live",risk:"b-risk En Riesgo"};
+  const [cls,label]=(map[s]||"b-paused Unknown").split(" ");
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+function renderDashboard(){
+  // Dept health
+  const health=[
+    {name:"Generación de Demanda Inbound",s:"active"},
+    {name:"Outbound Prospecting",s:"active"},
+    {name:"Content Marketing",s:"progress"},
+    {name:"Email Marketing",s:"active"},
+    {name:"Gestión CRM",s:"active"},
+    {name:"SEO y AI SEO",s:"active"},
+    {name:"Social Media LinkedIn",s:"active"},
+    {name:"Reporting Ejecutivo",s:"active"},
+    {name:"Reactivación Clientes",s:"pending"},
+    {name:"Sales Enablement",s:"active"},
+  ];
+  document.getElementById('dept-health').innerHTML = health.map(h=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border2)">
+      <span style="font-size:13px;font-weight:500">${h.name}</span>
+      ${statusBadge(h.s)}
+    </div>`).join('');
+
+  // Priorities
+  const prio=[
+    {text:"Fix Cloudflare AI bot blocking",urgency:"🔴 Esta semana",type:"SEO"},
+    {text:"Subir llms.txt + pricing.md al servidor",urgency:"🔴 Esta semana",type:"SEO"},
+    {text:"Publicar página FTL vs LTL",urgency:"🟡 Semana 2-3",type:"Contenido"},
+    {text:"Campaña email — Importadores Miami",urgency:"🟡 Jul 8",type:"Email"},
+    {text:"Depurar CRM y segmentar Q3",urgency:"🟢 Jul 5",type:"CRM"},
+  ];
+  document.getElementById('priorities').innerHTML = prio.map(p=>`
+    <div style="display:flex;gap:12px;padding:9px 0;border-bottom:1px solid var(--border2);align-items:flex-start">
+      <div style="flex:1"><div style="font-size:13px;font-weight:600">${p.text}</div><div style="font-size:11.5px;color:var(--muted);margin-top:2px">${p.type}</div></div>
+      <div style="font-size:11.5px;white-space:nowrap">${p.urgency}</div>
+    </div>`).join('');
+
+  // Recent activity
+  const acts=[
+    {icon:"✅",text:"FAQPage JSON-LD schema implementado en /faqs/ — 10 Q&As live",time:"Hoy, 2:30pm"},
+    {icon:"✅",text:"Organization schema implementado en homepage — datos completos DGL",time:"Hoy, 2:35pm"},
+    {icon:"✅",text:"robots.txt actualizado — GPTBot, ClaudeBot, Google-Extended habilitados",time:"Hoy, 11:00am"},
+    {icon:"📄",text:"Auditoría AI SEO completada — score inicial 1/15 documentado",time:"Hoy, 9:00am"},
+    {icon:"📋",text:"Reporte ejecutivo AI SEO generado y guardado en SEO_DGL/",time:"Hoy, 3:00pm"},
+    {icon:"📁",text:"Entregables listos: llms.txt, pricing.md, content-plan-ai-seo.md",time:"Hoy"},
+  ];
+  document.getElementById('recent-activity').innerHTML = `
+    <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--text)">Actividad Reciente — Sesión AI SEO</div>
+    ${acts.map(a=>`
+    <div style="display:flex;gap:12px;padding:9px 0;border-bottom:1px solid var(--border2);align-items:flex-start">
+      <div style="font-size:16px">${a.icon}</div>
+      <div style="flex:1;font-size:13px">${a.text}</div>
+      <div style="font-size:11px;color:var(--light);white-space:nowrap">${a.time}</div>
+    </div>`).join('')}`;
+}
+
+function renderProcesses(){
+  const container=document.getElementById('process-list');
+  container.innerHTML=processes.map((p,i)=>`
+    <div class="pcard" id="pcard-${i}" onclick="toggleProcess(${i})">
+      <div class="pcard-h">
+        <div class="pnum">${p.num}</div>
+        <div style="flex:1">
+          <div class="pname">${p.name}</div>
+          <div class="pdesc">${p.desc}</div>
+          <div class="pmeta">
+            <span>👤 ${p.owner}</span>
+            <span>🔁 ${p.freq}</span>
+            <span>📊 ${p.kpi}</span>
+          </div>
+          <div class="tags">${p.tools.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+        </div>
+        <div>${statusBadge(p.status)}</div>
+      </div>
+    </div>
+    <div class="pdetail" id="pdetail-${i}">
+      <div class="dgrid">
+        <div class="dblock"><label>Input</label><p>${p.input}</p></div>
+        <div class="dblock"><label>Output</label><p>${p.output}</p></div>
+      </div>
+      <div class="dblock" style="margin-bottom:14px"><label>Flujo paso a paso</label>
+        <ol class="steps">${p.steps.map(s=>`<li>${s}</li>`).join('')}</ol>
+      </div>
+      <div class="dblock"><label>Procesos Conectados</label>
+        <div class="connected">${p.connected.map(c=>`<span class="clink">${c}</span>`).join('')}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleProcess(i){
+  const card=document.getElementById(`pcard-${i}`);
+  const detail=document.getElementById(`pdetail-${i}`);
+  card.classList.toggle('open');
+  detail.classList.toggle('open');
+}
+
+function renderTools(){
+  const categories=Object.keys(tools);
+  document.getElementById('tool-tabs').innerHTML=categories.map((c,i)=>`<div class="tab${i===0?' active':''}" data-tab="tool-${i}">${c}</div>`).join('');
+  document.getElementById('tool-content').innerHTML=categories.map((c,i)=>`
+    <div class="tab-pane${i===0?' active':''}" id="tool-${i}">
+      <div class="g3">${tools[c].map(t=>`
+        <div class="tcard">
+          <div class="ticon" style="background:${t.color}">${t.icon}</div>
+          <div>
+            <div class="tname">${t.name}</div>
+            <div class="tpurpose">${t.purpose}</div>
+            <span class="ttier ${t.tier==='free'?'t-free':t.tier==='paid'?'t-paid':'t-partial'}">${t.tier==='free'?'Gratis':t.tier==='paid'?'Pago':'Freemium'}</span>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`).join('');
+  setupTabs('tool-tabs','tool-');
+}
+
+function renderKPIs(){
+  const cats=Object.keys(kpis);
+  document.getElementById('kpi-tabs').innerHTML=cats.map((c,i)=>`<div class="tab${i===0?' active':''}" data-tab="kpi-${i}">${c}</div>`).join('');
+  document.getElementById('kpi-content').innerHTML=cats.map((c,i)=>`
+    <div class="tab-pane${i===0?' active':''}" id="kpi-${i}">
+      <div class="card" style="padding:0;overflow:hidden">
+        <table class="ktable">
+          <thead><tr><th>Indicador</th><th>Meta</th><th>Actual</th><th>Progreso</th><th>Tendencia</th><th>Fuente</th></tr></thead>
+          <tbody>${kpis[c].map(k=>`
+            <tr>
+              <td class="kn">${k.name}</td>
+              <td class="kt">${k.target}</td>
+              <td class="kv" style="color:${k.pct>=100?'#059669':k.pct>=70?'var(--text)':'#DC2626'}">${k.current}</td>
+              <td style="min-width:120px">
+                <div class="phead"><span>${k.pct}%</span></div>
+                <div class="pbar"><div class="pfill ${k.color}" style="width:${Math.min(k.pct,100)}%"></div></div>
+              </td>
+              <td style="font-size:12px;color:var(--muted)">${k.trend}</td>
+              <td class="ksource">${k.source}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`).join('');
+  setupTabs('kpi-tabs','kpi-');
+}
+
+function renderAutomations(){
+  document.getElementById('auto-list').innerHTML=`
+    <div class="g2">${automations.map(a=>`
+      <div class="acard">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px">
+          <div style="font-size:14px;font-weight:700">${a.name}</div>
+          ${statusBadge(a.status)}
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px">${a.desc}</div>
+        <div class="aflow">
+          <div class="astep trigger">⚡ ${a.trigger.length>35?a.trigger.substring(0,35)+'…':a.trigger}</div>
+          <div class="arr">→</div>
+          <div class="astep action">⚙ ${a.action.length>35?a.action.substring(0,35)+'…':a.action}</div>
+          <div class="arr">→</div>
+          <div class="astep result">✓ ${a.result.length>30?a.result.substring(0,30)+'…':a.result}</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;font-size:11.5px;color:var(--muted)">
+          <span>🛠 ${a.tool}</span>
+          <span>🔁 ${a.freq}</span>
+        </div>
+      </div>`).join('')}
+    </div>`;
+}
+
+function renderAI(){
+  document.getElementById('ai-list').innerHTML=`
+    <div class="g3">${aiUseCases.map(a=>`
+      <div class="aicard">
+        <div class="aitool ${a.tool}">${a.tool==='claude'?'✦ Claude':a.tool==='chatgpt'?'⚡ ChatGPT':'◈ Perplexity'}</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:6px">${a.name}</div>
+        <div style="font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:10px">${a.desc}</div>
+        <div style="background:var(--bg);border-radius:6px;padding:8px 10px;font-size:12px;color:var(--green2)"><strong>Output:</strong> ${a.output}</div>
+        <div style="font-size:11.5px;color:var(--light);margin-top:8px">🔁 ${a.freq}</div>
+      </div>`).join('')}
+    </div>`;
+}
+
+function renderTeam(){
+  const m=teamData.member;
+  document.getElementById('team-content').innerHTML=`
+    <div class="g2" style="margin-bottom:24px">
+      <div>
+        <div class="sec-label" style="margin-top:0">Titular del Departamento</div>
+        <div class="team-card">
+          <div class="team-av">${m.name.split(' ').map(n=>n[0]).join('')}</div>
+          <div class="team-name">${m.name}</div>
+          <div class="team-role">${m.role}</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:12px">${m.email}</div>
+          <div class="tags" style="justify-content:center;margin-bottom:12px">${m.skills.map(s=>`<span class="tag">${s}</span>`).join('')}</div>
+          <div class="team-stat">
+            <div style="text-align:center"><div class="tstat-v">${m.processes}</div><div class="tstat-l">Procesos</div></div>
+            <div style="text-align:center"><div class="tstat-v">${m.tools}</div><div class="tstat-l">Herramientas</div></div>
+            <div style="text-align:center"><div class="tstat-v">${m.kpis}</div><div class="tstat-l">KPIs</div></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="sec-label" style="margin-top:0">Recursos Externos</div>
+        ${teamData.external.map(e=>`
+          <div class="card card-sm" style="margin-bottom:10px">
+            <div style="font-size:13px;font-weight:700;margin-bottom:2px">${e.name}</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:6px">${e.role}</div>
+            <div style="font-size:12px;color:var(--text)">${e.scope}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="sec-label">Matriz RACI por Proceso</div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="padding:12px 16px;background:var(--bg);font-size:11.5px;color:var(--muted)">
+        <strong style="color:var(--navy)">R</strong> = Responsible (ejecuta) &nbsp;·&nbsp;
+        <strong style="color:var(--green2)">A</strong> = Accountable (responde) &nbsp;·&nbsp;
+        <strong style="color:var(--blue)">C</strong> = Consulted (aporta) &nbsp;·&nbsp;
+        <strong style="color:var(--light)">I</strong> = Informed (recibe info)
+      </div>
+      <table class="raci">
+        <thead><tr><th>Proceso</th><th>Cristian Serna</th><th>Ventas</th><th>Diseño</th><th>Dev Web</th></tr></thead>
+        <tbody>${teamData.raci.map(r=>`
+          <tr>
+            <td>${r.proc}</td>
+            <td class="${r.cs.includes('R')?'R':r.cs.includes('A')?'A':'I'}">${r.cs}</td>
+            <td class="${r.sales==='-'?'I':r.sales==='R'?'R':r.sales==='A'?'A':'C'}">${r.sales}</td>
+            <td class="${r.design==='-'?'I':r.design==='C'?'C':'R'}">${r.design}</td>
+            <td class="${r.dev==='-'?'I':r.dev==='C'?'C':'R'}">${r.dev}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function renderDeliverables(){
+  const typeColors={report:"#EF4444",contenido:"#05035C",social:"#0A66C2",email:"#77B82A",seo:"#F59E0B",crm:"#6B7280",sales:"#7C3AED"};
+  const typeLabels={report:"Reporte",contenido:"Contenido",social:"Social",email:"Email",seo:"SEO",crm:"CRM",sales:"Ventas"};
+  document.getElementById('deliverables-content').innerHTML=`
+    <div class="sbox">✅ 3 entregables completados hoy — FAQPage schema, Organization schema y robots.txt fix implementados en producción.</div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:800;margin-bottom:16px">Julio 2026 — Entregables del Mes</div>
+      ${deliverables.map((d,i)=>`
+        <div class="deli-item">
+          <div class="deli-cb${d.done?' done':''}" onclick="toggleDeli(${i})" id="dcb-${i}">${d.done?'✓':''}</div>
+          <div class="deli-text" style="${d.done?'text-decoration:line-through;color:var(--muted)':''}">
+            ${d.text}
+          </div>
+          <span class="deli-type" style="background:${typeColors[d.type]}18;color:${typeColors[d.type]}">${typeLabels[d.type]}</span>
+          <div class="deli-due">${d.due}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function toggleDeli(i){
+  deliverables[i].done=!deliverables[i].done;
+  const cb=document.getElementById(`dcb-${i}`);
+  cb.classList.toggle('done');
+  cb.textContent=deliverables[i].done?'✓':'';
+}
+
+function renderCalendar(){
+  // July 2026 starts on Wednesday (day 3, 0=Sun)
+  const daysInJul=31; const startDay=3;
+  const dayNames=["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+  let cells='';
+  cells+=dayNames.map(d=>`<div class="cal-h">${d}</div>`).join('');
+  // Previous month trailing days (June: 30 days)
+  for(let i=0;i<startDay;i++){const d=30-startDay+i+1;cells+=`<div class="cal-d other"><div class="cal-dn">${d}</div></div>`;}
+  for(let d=1;d<=daysInJul;d++){
+    const evs=calendarEvents[d]?.events||[];
+    const isToday=(d===26&&false); // July calendar — today is in June
+    cells+=`<div class="cal-d${isToday?' today':''}"><div class="cal-dn">${d}</div>${evs.map(e=>`<div class="ev ${e.t}">${e.l}</div>`).join('')}</div>`;
+  }
+  // Fill remaining cells
+  const filled=startDay+daysInJul; const rem=7-filled%7; if(rem<7){for(let i=1;i<=rem;i++)cells+=`<div class="cal-d other"><div class="cal-dn">${i}</div></div>`;}
+
+  const legend=[
+    {cls:"ev-blog",l:"Blog / Contenido"},{cls:"ev-li",l:"LinkedIn"},{cls:"ev-email",l:"Email"},
+    {cls:"ev-report",l:"Reporte"},{cls:"ev-seo",l:"SEO"},{cls:"ev-camp",l:"Campaña"}
+  ];
+
+  document.getElementById('calendar-content').innerHTML=`
+    <div style="display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap">
+      ${legend.map(l=>`<div style="display:flex;align-items:center;gap:6px"><span class="ev ${l.cls}" style="font-size:11px;padding:3px 8px">${l.l}</span></div>`).join('')}
+    </div>
+    <div style="font-size:15px;font-weight:700;margin-bottom:12px">Julio 2026</div>
+    <div class="cal">${cells}</div>
+    <div class="ibox" style="margin-top:16px">📌 El calendario muestra el plan de contenido para Julio 2026. Cada publicación debe estar redactada y programada con 2 semanas de anticipación los lunes en batch.</div>`;
+}
+
+function renderSEO(){
+  const done=seoItems.filter(s=>s.status==='done').length;
+  const partial=seoItems.filter(s=>s.status==='partial').length;
+  document.getElementById('seo-content').innerHTML=`
+    <div class="g4" style="margin-bottom:20px">
+      <div class="kcard"><div class="kcard-label">Score Actual</div><div class="kcard-val">${done}<span style="font-size:16px;font-weight:400;color:var(--muted)">/15</span></div><div class="kcard-sub">Criterios implementados</div></div>
+      <div class="kcard blue"><div class="kcard-label">Cambio Hoy</div><div class="kcard-val">+5</div><div class="kcard-sub">vs score inicial de 1/15</div></div>
+      <div class="kcard amber"><div class="kcard-label">Pendientes Críticos</div><div class="kcard-val">2</div><div class="kcard-sub">Cloudflare + archivos servidor</div></div>
+      <div class="kcard navy"><div class="kcard-label">Meta 90 Días</div><div class="kcard-val">12<span style="font-size:16px;font-weight:400;color:rgba(255,255,255,.5)">/15</span></div><div class="kcard-sub">Score objetivo Septiembre 2026</div></div>
+    </div>
+
+    <div class="g2">
+      <div>
+        <div class="sec-label" style="margin-top:0">Progreso de Implementación</div>
+        <div class="card">
+          ${seoItems.map(s=>`
+            <div class="seo-row">
+              <div class="seo-check ${s.status==='done'?'sc-done':s.status==='partial'?'sc-partial':'sc-no'}">
+                ${s.status==='done'?'✓':s.status==='partial'?'!':'○'}
+              </div>
+              <div style="flex:1">
+                <div class="seo-title">${s.title}</div>
+                <div class="seo-note">${s.note}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div>
+        <div class="sec-label" style="margin-top:0">Monitoreo de Visibilidad AI</div>
+        <div class="card" style="margin-bottom:16px">
+          <div style="font-size:13px;font-weight:700;margin-bottom:12px">Verificar Mensualmente</div>
+          ${[
+            ["freight broker USA Mexico","Perplexity","Citación con link"],
+            ["what is LTL freight","ChatGPT","Mención de DGL"],
+            ["how does drayage work","Perplexity","Citación de /faqs/"],
+            ["cross border freight usa mexico","Google AI Overviews","Snippet DGL"],
+            ["ftl vs ltl","Perplexity","Tabla DGL citada"],
+            ["what is a freight broker","ChatGPT","Definición DGL"],
+          ].map(q=>`
+            <div style="padding:9px 0;border-bottom:1px solid var(--border2)">
+              <div style="font-size:12.5px;font-weight:600;font-family:monospace;background:var(--bg);padding:2px 6px;border-radius:4px;display:inline">"${q[0]}"</div>
+              <div style="display:flex;gap:8px;margin-top:5px;font-size:11.5px;color:var(--muted)">
+                <span>🔍 ${q[1]}</span><span>→ ${q[2]}</span>
+              </div>
+            </div>`).join('')}
+        </div>
+
+        <div class="sec-label">Acción Inmediata Requerida</div>
+        <div class="wbox">
+          <div style="font-weight:700;margin-bottom:8px">⚠ 2 acciones pendientes — esta semana</div>
+          <div>1. Cloudflare Dashboard → Security → Bots → Desactivar "AI Scrapers and Crawlers"</div>
+          <div style="margin-top:6px">2. cPanel → File Manager → Subir llms.txt y pricing.md a public_html/</div>
+        </div>
+
+        <div class="sec-label">Herramientas de Monitoreo</div>
+        <div class="card">
+          ${[["Otterly AI","Monitor mentions en AI search","otterly.ai"],["Peec AI","Track citaciones en Perplexity + ChatGPT","peec.ai"],["GSC","Tráfico orgánico y keywords","search.google.com/search-console"],["GA4","Referrals desde perplexity.ai, chatgpt.com","analytics.google.com"]].map(h=>`
+            <div style="padding:8px 0;border-bottom:1px solid var(--border2)">
+              <div style="font-size:13px;font-weight:600">${h[0]}</div>
+              <div style="font-size:12px;color:var(--muted)">${h[1]}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+// ─── TABS ────────────────────────────────────────────────────────────────────
+
+function setupTabs(tabsId, prefix){
+  const tabEls=document.getElementById(tabsId).querySelectorAll('.tab');
+  tabEls.forEach((tab,i)=>{
+    tab.addEventListener('click',()=>{
+      tabEls.forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll(`[id^="${prefix}"]`).forEach(p=>p.classList.remove('active'));
+      document.getElementById(`${prefix}${i}`).classList.add('active');
+    });
+  });
+}
+
+// ─── NAVIGATION ──────────────────────────────────────────────────────────────
+
+function navigateTo(sec){
+  if(!sec||!document.getElementById(sec)) return;
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(sec).classList.add('active');
+  document.querySelectorAll('.nav-item,.nav-sub-item').forEach(n=>n.classList.remove('active'));
+  const ni=document.querySelector(`.nav-item[data-section="${sec}"]`);
+  if(ni) ni.classList.add('active');
+  const si=document.querySelector(`.nav-sub-item[data-section="${sec}"]`);
+  if(si) si.classList.add('active');
+}
+
+document.querySelectorAll('.nav-item[data-section]').forEach(item=>{
+  item.addEventListener('click',()=>navigateTo(item.dataset.section));
+});
+document.querySelectorAll('.nav-sub-item[data-section]').forEach(item=>{
+  item.addEventListener('click',()=>navigateTo(item.dataset.section));
+});
+
+// Collapsible Planeación
+document.getElementById('toggle-planeacion').addEventListener('click',()=>{
+  document.getElementById('sub-planeacion').classList.toggle('open');
+  document.getElementById('arr-planeacion').classList.toggle('open');
+});
+
+// ─── DATE & GREETING ─────────────────────────────────────────────────────────
+
+(function(){
+  const now=new Date();
+  const opts={weekday:'long',year:'numeric',month:'long',day:'numeric'};
+  const dateEl=document.getElementById('tn-date');
+  if(dateEl) dateEl.textContent=now.toLocaleDateString('es-ES',opts);
+  const h=now.getHours();
+  const g=h<12?'Buenos días':h<18?'Buenas tardes':'Buenas noches';
+  const gEl=document.getElementById('dash-greeting');
+  if(gEl) gEl.textContent=`${g}, Cristian 👋`;
+  const wn=Math.ceil((now.getDate()+new Date(now.getFullYear(),now.getMonth(),1).getDay())/7);
+  const mn=now.toLocaleDateString('es-ES',{month:'long'});
+  const dEl=document.getElementById('dash-datestr');
+  if(dEl) dEl.textContent=`Resumen ejecutivo — Semana ${wn}, ${mn.charAt(0).toUpperCase()+mn.slice(1)} ${now.getFullYear()}`;
+})();
+
+// ─── CHARTS ──────────────────────────────────────────────────────────────────
+
+function initCharts(){
+  // Pipeline & Revenue — last 12 months
+  const months=['Ago','Sep','Oct','Nov','Dic','Ene','Feb','Mar','Abr','May','Jun','Jul'];
+  const pipelineData=[290,310,320,340,360,370,390,410,430,450,470,690];
+  const revenueData=[180,200,210,230,240,250,270,285,300,320,350,530];
+  const ctxP=document.getElementById('chartPipeline');
+  if(ctxP){
+    new Chart(ctxP,{
+      type:'line',
+      data:{
+        labels:months,
+        datasets:[
+          {label:'Pipeline',data:pipelineData,borderColor:'#05035C',backgroundColor:'rgba(5,3,92,0.06)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'#05035C',borderWidth:2},
+          {label:'Revenue Cerrado',data:revenueData,borderColor:'#77B82A',backgroundColor:'rgba(119,184,42,0.08)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'#77B82A',borderWidth:2}
+        ]
+      },
+      options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:11}}},y:{grid:{color:'#F3F4F6'},ticks:{font:{size:11},callback:v=>v+'K'}}}}
+    });
+  }
+
+  // Mix de Canales — donut
+  const channels=[
+    {label:'LinkedIn Ads',val:28,color:'#05035C'},
+    {label:'Email Marketing',val:18,color:'#77B82A'},
+    {label:'Referidos',val:10,color:'#22C55E'},
+    {label:'SEO Orgánico',val:22,color:'#3B82F6'},
+    {label:'Google Ads',val:15,color:'#F59E0B'},
+    {label:'Outbound',val:7,color:'#A855F7'},
+  ];
+  const ctxC=document.getElementById('chartChannels');
+  if(ctxC){
+    new Chart(ctxC,{
+      type:'doughnut',
+      data:{
+        labels:channels.map(c=>c.label),
+        datasets:[{data:channels.map(c=>c.val),backgroundColor:channels.map(c=>c.color),borderWidth:2,borderColor:'#fff',hoverOffset:4}]
+      },
+      options:{responsive:true,maintainAspectRatio:true,cutout:'60%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw}%`}}}}
+    });
+    const leg=document.getElementById('channel-legend');
+    if(leg) leg.innerHTML=channels.map(c=>`<div style="display:flex;align-items:center;gap:4px;font-size:10.5px;color:#667085"><div style="width:8px;height:8px;border-radius:50%;background:${c.color};flex-shrink:0"></div>${c.label} ${c.val}%</div>`).join('');
+  }
+}
+
+// ─── V2.1: NEW DATA ──────────────────────────────────────────────────────────
+
+const campaigns = [
+  {name:"Reactivación Q3 — Cuentas Inactivas 6+ meses", tipo:"Reactivación de Clientes", status:"active", audiencia:"42 cuentas con +6 meses sin operación", hipotesis:"Un mensaje personalizado con disponibilidad de capacidad actual reactiva al menos 3 cuentas en 60 días.", meta:"3 cuentas reactivadas · 1 operación cerrada", canal:"Email + Llamada Ventas", progreso:38},
+  {name:"Cross-Border México → Texas", tipo:"Apertura de Nuevos Mercados", status:"active", audiencia:"Maquiladoras y exportadores en Monterrey/CDMX", hipotesis:"Contenido educativo sobre pedimentos y cross-border en LinkedIn genera RFQs de exportadores mexicanos.", meta:"8 RFQs calificados", canal:"LinkedIn Ads + Contenido", progreso:61},
+  {name:"Autoridad AI SEO — dglus.com", tipo:"Construcción de Autoridad", status:"active", audiencia:"Búsquedas en ChatGPT/Perplexity sobre freight brokers USA-México", hipotesis:"Publicar contenido AI-optimizado logra la primera citación verificada en motores de IA antes de Sep 30.", meta:"1 citación verificada + Score 12/15", canal:"SEO + AI SEO", progreso:40},
+  {name:"Nurture Freight Forwarders LATAM", tipo:"Fortalecimiento de Relaciones con FF", status:"active", audiencia:"38 freight forwarders con volumen 20-200 containers/mes", hipotesis:"Secuencia de 5 emails educativos posiciona a DGL como el partner terrestre preferido antes de temporada alta.", meta:"12 reuniones agendadas", canal:"Email + LinkedIn", progreso:72},
+  {name:"Recuperación de Cotizaciones Perdidas", tipo:"Recuperación de Cotizaciones Perdidas", status:"pending", audiencia:"RFQs no cerrados últimos 90 días", hipotesis:"Un seguimiento con nueva tarifa o disponibilidad recupera el 15% de cotizaciones perdidas.", meta:"6 cotizaciones recuperadas", canal:"CRM + Llamada Directa", progreso:0},
+  {name:"Campaña de Fidelización — Top 20 Cuentas", tipo:"Fidelización", status:"pending", audiencia:"Top 20 clientes por revenue", hipotesis:"Reporte trimestral de valor entregado (on-time %, ahorro, visibilidad) incrementa retención y cross-selling.", meta:"3 upsells de servicio (Warehousing/Drayage)", canal:"Reporte Ejecutivo + Reunión", progreso:0},
+];
+
+const promptLibrary = {
+  "Prospección": [
+    {title:"Perfil de prospecto ICP", text:"Actúa como analista comercial de un Freight Broker 3PL. Analiza [EMPRESA] e identifica: modelo de negocio, volumen probable de shipments, necesidades logísticas terrestres en Norteamérica, y 3 ángulos de entrada para DGL. Sé específico, no genérico."},
+    {title:"Email outbound personalizado", text:"Escribe un correo outbound B2B de 90 palabras para [CARGO] en [EMPRESA], mencionando un reto logístico específico de su industria y cómo DGL resuelve visibilidad y capacidad terrestre en USA-México. Tono ejecutivo, sin clichés, CTA claro."},
+  ],
+  "Contenido & SEO": [
+    {title:"Brief de artículo AI SEO", text:"Genera un brief para un artículo optimizado para citación en IA sobre '[TEMA]'. Incluye: H1, 5 H2, bloques de definición de 40-60 palabras, 3 estadísticas con fuente, y estructura FAQ con schema markup sugerido."},
+    {title:"Post LinkedIn educativo", text:"Escribe un post de LinkedIn (formato hook + valor + CTA suave) explicando [CONCEPTO LOGÍSTICO] para directores de logística en USA. Máximo 900 caracteres, sin emojis excesivos, tono de autoridad técnica."},
+  ],
+  "Reporting": [
+    {title:"Resumen ejecutivo mensual", text:"Con estos datos: [PEGAR DATOS], redacta un resumen ejecutivo de máximo 2 páginas para Dirección General. Estructura: 3 wins, 3 áreas de mejora, impacto en pipeline/revenue, y 3 recomendaciones accionables para el próximo mes."},
+  ],
+};
+
+const knowledgeArticles = [
+  {icon:"📦",cat:"Fundamentos",title:"FTL vs LTL: cómo elegir el modo correcto",desc:"Guía interna para explicar a prospectos la diferencia operativa y de costos entre Full Truckload y Less Than Truckload."},
+  {icon:"🛃",cat:"Cross-Border",title:"Qué necesita saber un cliente sobre pedimentos y cruces fronterizos",desc:"Checklist de documentación y tiempos típicos para operaciones USA-México que el equipo comercial debe dominar."},
+  {icon:"🏗️",cat:"Servicios DGL",title:"Cuándo recomendar Drayage vs Intermodal",desc:"Criterios de decisión según puerto de entrada, distancia y urgencia del cliente."},
+  {icon:"🤝",cat:"Ventas",title:"Cómo posicionar a DGL como socio estratégico (no como precio)",desc:"Framework de conversación para diferenciar a DGL frente a brokers que compiten solo por tarifa."},
+  {icon:"🌐",cat:"AI SEO",title:"Qué es GEO (Generative Engine Optimization) y por qué importa",desc:"Introducción a la optimización para que IA como ChatGPT y Perplexity citen a DGL como fuente confiable."},
+  {icon:"📊",cat:"CRM",title:"Criterios de calificación MQL → SQL en DGL",desc:"Definición interna de los criterios ICP que determinan cuándo un lead pasa a manos de ventas."},
+];
+
+const docLibrary = [
+  {icon:"📄",color:"#05035C",name:"Brand Guidelines DGL 2026",type:"PDF · Branding",updated:"Jun 2026"},
+  {icon:"📊",color:"#3B82F6",name:"Plantilla Reporte Ejecutivo Mensual",type:"DOCX · Reporting",updated:"Jun 2026"},
+  {icon:"📋",color:"#77B82A",name:"One-Pager de Servicios DGL (ES/EN)",type:"PDF · Ventas",updated:"May 2026"},
+  {icon:"🖼️",color:"#F59E0B",name:"Kit de Assets — Logos y Plantillas Canva",type:"ZIP · Diseño",updated:"Abr 2026"},
+  {icon:"📈",color:"#A855F7",name:"Plantilla Análisis de Competencia",type:"XLSX · Estrategia",updated:"Mar 2026"},
+  {icon:"✅",color:"#EF4444",name:"Checklist de Onboarding de Cliente Nuevo",type:"PDF · Operación",updated:"Jun 2026"},
+  {icon:"📝",color:"#0EA5E9",name:"Guion de Llamada — Cuentas Inactivas",type:"DOCX · Ventas",updated:"Jul 2026"},
+  {icon:"🗺️",color:"#14B8A6",name:"Mapa de Cobertura Norteamérica",type:"PDF · Operación",updated:"Feb 2026"},
+];
+
+const crmStages = [
+  {name:"Contacto", leads:[{n:"Meridian Imports",m:"Retail · Texas"},{n:"Vallarta Foods Export",m:"Food · Jalisco"},{n:"NorthLine Distribution",m:"Retail · Illinois"}]},
+  {name:"Calificado (MQL)", leads:[{n:"Pacific Rim Forwarders",m:"Freight Forwarder · LA"},{n:"Delta Auto Parts",m:"Automotive · Michigan"}]},
+  {name:"Propuesta (SQL)", leads:[{n:"Grupo Maquilador Reyna",m:"Manufacturing · Monterrey"},{n:"CoastalFresh Produce",m:"Food · Florida"},{n:"Houston Steel Supply",m:"Industrial · Texas"}]},
+  {name:"Negociación", leads:[{n:"TransGlobal Forwarding",m:"Freight Forwarder · Miami"}]},
+  {name:"Cierre Ganado", leads:[{n:"Andes Textile Co.",m:"Retail · CDMX"}]},
+];
+
+// ─── V2.1: RENDER FUNCTIONS ─────────────────────────────────────────────────
+
+function renderExec(){
+  document.getElementById('exec-content').innerHTML = `
+    <div class="exec-hero" style="margin-bottom:22px">
+      <div class="exec-tag">Estado del Motor Comercial</div>
+      <div class="exec-big">$340K en pipeline generado por Marketing</div>
+      <div style="font-size:13px;opacity:.85;margin-top:8px;max-width:640px">24 RFQs este mes, 187 leads activos en CRM y un AI SEO Score de 6/15 en mejora constante. Meta Q3: 30 RFQs/mes y $500K en pipeline.</div>
+    </div>
+    <div class="g4" style="margin-bottom:22px">
+      <div class="kcard"><div class="kcard-label">Pipeline Generado</div><div class="kcard-val" data-count="340">0</div><div class="kcard-sub">Miles USD · Meta $500K</div></div>
+      <div class="kcard blue"><div class="kcard-label">RFQs / Mes</div><div class="kcard-val" data-count="24">0</div><div class="kcard-sub">Meta: 30/mes</div></div>
+      <div class="kcard navy"><div class="kcard-label">Cuentas Reactivadas Q3</div><div class="kcard-val" data-count="1">0</div><div class="kcard-sub">Meta: 3 cuentas</div></div>
+      <div class="kcard amber"><div class="kcard-label">CAC Estimado</div><div class="kcard-val">$1.2<span style="font-size:16px">K</span></div><div class="kcard-sub">LTV/CAC ratio: 6.4x</div></div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px">Decisiones que requieren atención de Dirección</div>
+        <div class="ibox">Aprobar presupuesto adicional de $2,500/mes en LinkedIn Ads para sostener la campaña Cross-Border México → Texas, que muestra el mejor CPL del trimestre.</div>
+        <div class="wbox">Evaluar ampliar el equipo de Marketing: la carga operativa actual limita la cadencia de contenido AI SEO a 1 pieza/mes vs las 2 necesarias para la meta Q3.</div>
+      </div>
+      <div class="card">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px">Riesgos Comerciales Activos</div>
+        <div id="exec-risks"></div>
+      </div>
+    </div>`;
+  document.getElementById('exec-risks').innerHTML = [
+    ["Configuración técnica pendiente en Cloudflare bloquea crawlers de IA","Alto","SEO/GEO"],
+    ["42 cuentas inactivas +6 meses sin campaña de reactivación formal","Medio","CRM"],
+    ["Dependencia de un solo responsable de Marketing (bus factor)","Medio","Estructura"],
+  ].map(r=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border2)">
+      <div style="font-size:12.5px">${r[0]}</div>
+      <span class="badge ${r[1]==='Alto'?'b-risk':'b-pending'}" style="flex-shrink:0;margin-left:10px">${r[1]}</span>
+    </div>`).join('');
+  animateCounts();
+}
+
+function renderCRM(){
+  document.getElementById('crm-content').innerHTML = `
+    <div class="ibox">💡 Vista Kanban del pipeline generado por Marketing. Arrastra mentalmente cada cuenta según su avance — sincronizado con el CRM real del equipo.</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px" id="crm-board"></div>`;
+  document.getElementById('crm-board').innerHTML = crmStages.map(s=>`
+    <div class="stage-col">
+      <div class="stage-head"><span>${s.name}</span><span>${s.leads.length}</span></div>
+      ${s.leads.map(l=>`<div class="lead-card"><div class="lead-name">${l.n}</div><div class="lead-meta">${l.m}</div></div>`).join('')}
+    </div>`).join('');
+}
+
+function renderCampaigns(){
+  document.getElementById('campaigns-content').innerHTML = `
+    <div class="g2" id="camp-grid" style="grid-template-columns:repeat(2,1fr)"></div>`;
+  document.getElementById('camp-grid').innerHTML = campaigns.map(c=>`
+    <div class="campcard">
+      <div class="camp-top">
+        <div>
+          <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--navy);margin-bottom:4px">${c.tipo}</div>
+          <div style="font-size:14.5px;font-weight:700">${c.name}</div>
+        </div>
+        <span class="badge ${c.status==='active'?'b-active':'b-pending'}">${c.status==='active'?'Activa':'Planeada'}</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:8px"><b>Hipótesis:</b> ${c.hipotesis}</div>
+      <div style="font-size:11.5px;color:var(--muted);margin-bottom:10px">🎯 ${c.audiencia}<br>📣 ${c.canal} &nbsp;·&nbsp; 🏁 ${c.meta}</div>
+      <div class="phead"><span>Progreso</span><span>${c.progreso}%</span></div>
+      <div class="pbar"><div class="pfill${c.progreso<40?' w':''}" style="width:${c.progreso}%"></div></div>
+    </div>`).join('');
+}
+
+function renderClaude(){
+  document.getElementById('claude-content').innerHTML = `
+    <div class="g2" style="grid-template-columns:1.4fr 1fr">
+      <div class="chatbox">
+        <div class="chat-head">🤖 Claude AI — Asistente Estratégico DGL</div>
+        <div class="chat-msgs" id="claude-msgs">
+          <div class="msg ai">Hola Cristian. Puedo ayudarte a analizar prospectos, redactar campañas, revisar KPIs o construir contenido AI SEO. ¿Qué necesitas hoy?</div>
+        </div>
+        <div class="chat-suggest">
+          <div class="chip" onclick="claudeDemo('Analiza el prospecto Meridian Imports')">Analizar prospecto</div>
+          <div class="chip" onclick="claudeDemo('Redacta un post de LinkedIn sobre drayage')">Redactar post LinkedIn</div>
+          <div class="chip" onclick="claudeDemo('Resume el pipeline de este mes')">Resumen de pipeline</div>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="claude-input" placeholder="Escribe tu instrucción para Claude..." onkeydown="if(event.key==='Enter')claudeDemo(this.value)">
+          <button class="btn btn-primary" onclick="claudeDemo(document.getElementById('claude-input').value)">Enviar</button>
+        </div>
+      </div>
+      <div>
+        <div class="sec-label" style="margin-top:0">Casos de Uso Activos</div>
+        <div id="ai-list-mini"></div>
+      </div>
+    </div>`;
+  document.getElementById('ai-list-mini').innerHTML = aiUseCases.slice(0,4).map(a=>`
+    <div class="aicard" style="margin-bottom:10px">
+      <div class="aitool ${a.tool?a.tool.toLowerCase():'claude'}">${a.tool||'Claude'}</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px">${a.name||''}</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.5">${a.desc||''}</div>
+    </div>`).join('');
+}
+
+function claudeDemo(text){
+  if(!text) return;
+  const box=document.getElementById('claude-msgs');
+  box.innerHTML+=`<div class="msg user">${text}</div>`;
+  const input=document.getElementById('claude-input'); if(input) input.value='';
+  box.scrollTop=box.scrollHeight;
+  setTimeout(()=>{
+    box.innerHTML+=`<div class="msg ai">Entendido. Este panel es una vista de demostración conectada al flujo de trabajo real del equipo — la ejecución completa se ejecuta en Claude directamente para mantener el control de datos sensibles de DGL.</div>`;
+    box.scrollTop=box.scrollHeight;
+  },500);
+}
+
+function renderPrompts(){
+  const cats=Object.keys(promptLibrary);
+  document.getElementById('prompt-tabs').innerHTML = cats.map((c,i)=>`<div class="tab${i===0?' active':''}" data-i="${i}">${c}</div>`).join('');
+  document.getElementById('prompt-content').innerHTML = cats.map((c,i)=>`
+    <div class="tab-pane${i===0?' active':''}" id="prompt-${i}">
+      <div class="g2">
+        ${promptLibrary[c].map(p=>`
+        <div class="promptcard">
+          <span class="prompt-cat">${c}</span>
+          <div style="font-size:13.5px;font-weight:700">${p.title}</div>
+          <div class="prompt-text">${p.text}</div>
+          <button class="copy-btn" onclick="copyPrompt(this)" data-text="${p.text.replace(/"/g,'&quot;')}">📋 Copiar prompt</button>
+        </div>`).join('')}
+      </div>
+    </div>`).join('');
+  setupTabs('prompt-tabs','prompt-');
+}
+
+function copyPrompt(btn){
+  const txt=btn.getAttribute('data-text');
+  navigator.clipboard?.writeText(txt).catch(()=>{});
+  const orig=btn.textContent; btn.textContent='✓ Copiado'; setTimeout(()=>btn.textContent=orig,1500);
+}
+
+function renderKnowledge(){
+  document.getElementById('knowledge-content').innerHTML = `
+    <div class="g3" id="know-grid"></div>`;
+  document.getElementById('know-grid').innerHTML = knowledgeArticles.map(k=>`
+    <div class="card">
+      <div style="font-size:24px;margin-bottom:10px">${k.icon}</div>
+      <span class="tag" style="margin-bottom:8px;display:inline-block">${k.cat}</span>
+      <div style="font-size:14px;font-weight:700;margin-bottom:6px">${k.title}</div>
+      <div style="font-size:12.5px;color:var(--muted);line-height:1.5">${k.desc}</div>
+    </div>`).join('');
+}
+
+function renderDocs(){
+  document.getElementById('docs-content').innerHTML = `<div class="g3" id="docs-grid"></div>`;
+  document.getElementById('docs-grid').innerHTML = docLibrary.map(d=>`
+    <div class="doccard" style="display:flex;gap:12px;align-items:flex-start">
+      <div class="doc-icon" style="background:${d.color}">${d.icon}</div>
+      <div style="flex:1">
+        <div style="font-size:13.5px;font-weight:700;margin-bottom:2px">${d.name}</div>
+        <div style="font-size:11.5px;color:var(--muted)">${d.type}</div>
+        <div style="font-size:11px;color:var(--light);margin-top:4px">Actualizado: ${d.updated}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ─── V2.1: THEME, SIDEBAR, SEARCH, COUNT-UP ─────────────────────────────────
+
+function toggleTheme(){
+  const root=document.documentElement;
+  const dark=root.getAttribute('data-theme')==='dark';
+  root.setAttribute('data-theme', dark?'light':'dark');
+  document.getElementById('theme-dot').textContent = dark?'☀️':'🌙';
+  try{localStorage.setItem('dgl-theme', dark?'light':'dark');}catch(e){}
+}
+(function(){
+  try{
+    const saved=localStorage.getItem('dgl-theme');
+    if(saved==='dark'){document.documentElement.setAttribute('data-theme','dark');}
+  }catch(e){}
+})();
+window.addEventListener('DOMContentLoaded',()=>{
+  const dot=document.getElementById('theme-dot');
+  if(dot) dot.textContent = document.documentElement.getAttribute('data-theme')==='dark' ? '🌙':'☀️';
+});
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('collapsed');
+  const brand=document.getElementById('tn-brand');
+  if(brand) brand.classList.toggle('collapsed');
+}
+
+const searchIndex=[
+  ...processes.map(p=>({title:p.name,cat:'Proceso',icon:'🔄',section:'procesos'})),
+  ...campaigns.map(c=>({title:c.name,cat:'Campaña',icon:'🚀',section:'campanas'})),
+  ...knowledgeArticles.map(k=>({title:k.title,cat:'Conocimiento',icon:'🎓',section:'knowledge'})),
+  ...docLibrary.map(d=>({title:d.name,cat:'Documento',icon:'🗂️',section:'docs'})),
+  {title:'CRM Marketing — Pipeline',cat:'CRM',icon:'🧲',section:'crm'},
+  {title:'Panel Ejecutivo',cat:'Dirección',icon:'🏛️',section:'ejecutivo'},
+  {title:'Biblioteca de Prompts',cat:'IA',icon:'💬',section:'prompts'},
+  {title:'GEO / AI SEO Tracker',cat:'SEO',icon:'🌐',section:'seo'},
+];
+
+function openSearch(){
+  document.getElementById('search-overlay').classList.add('open');
+  const inp=document.getElementById('search-input');
+  inp.value=''; runSearch('');
+  setTimeout(()=>inp.focus(),50);
+}
+function closeSearch(){document.getElementById('search-overlay').classList.remove('open');}
+function runSearch(q){
+  q=(q||'').toLowerCase().trim();
+  const results = q ? searchIndex.filter(r=>r.title.toLowerCase().includes(q)) : searchIndex.slice(0,8);
+  const el=document.getElementById('search-results');
+  if(!results.length){ el.innerHTML='<div class="modal-empty">Sin resultados para "'+q+'"</div>'; return; }
+  el.innerHTML = results.slice(0,10).map(r=>`
+    <div class="modal-result" onclick="navigateTo('${r.section}');closeSearch()">
+      <div class="modal-result-icon">${r.icon}</div>
+      <div><div class="modal-result-title">${r.title}</div><div class="modal-result-cat">${r.cat}</div></div>
+    </div>`).join('');
+}
+document.addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){ e.preventDefault(); openSearch(); }
+  if(e.key==='Escape') closeSearch();
+});
+
+function animateCounts(){
+  document.querySelectorAll('[data-count]').forEach(el=>{
+    const target=parseFloat(el.getAttribute('data-count'));
+    let cur=0; const step=Math.max(target/30,0.5);
+    const iv=setInterval(()=>{
+      cur+=step;
+      if(cur>=target){ cur=target; clearInterval(iv); }
+      el.textContent = Number.isInteger(target)? Math.round(cur) : cur.toFixed(1);
+    },20);
+  });
+}
+
+const contentPipelineQ3 = [
+  {titulo:"FTL vs LTL: How to Choose",url:"/ftl-vs-ltl/",semana:"Sem 1-2",kw:"8,100/mes",estado:"pending"},
+  {titulo:"What is a Freight Broker?",url:"/what-is-a-freight-broker/",semana:"Sem 4-5",kw:"40,500/mes",estado:"pending"},
+  {titulo:"Cross-Border Freight USA-Mexico",url:"/cross-border-shipping-usa-mexico/",semana:"Sem 6-8",kw:"Alta intención",estado:"pending"},
+  {titulo:"Drayage Costs and Rates 2026",url:"/drayage-rates/",semana:"Sem 8-10",kw:"1,600/mes",estado:"pending"},
+  {titulo:"LTL Freight Class Guide",url:"/ltl-freight-class/",semana:"Sem 10-12",kw:"3,200/mes",estado:"pending"},
+];
+const linkedinMix = [
+  ["40%","Educativo","Cómo funciona LTL, tips de drayage, cross-border guide"],
+  ["30%","Industria","Supply chain news, nearshoring, tendencias de flete"],
+  ["20%","DGL","Servicios, ventajas, diferenciadores, equipo"],
+  ["10%","Social Proof","Casos de éxito, partnerships, momentos del equipo"],
+];
+
+function renderContentStrategy(){
+  document.getElementById('contenido-grid').innerHTML = `
+    <div class="card">
+      <div class="sec-label" style="margin-top:0">Pipeline de Contenido Q3</div>
+      ${contentPipelineQ3.map(c=>`
+      <div style="padding:9px 0;border-bottom:1px solid var(--border2)">
+        <div style="font-size:13px;font-weight:700">${c.titulo}</div>
+        <div style="display:flex;gap:10px;margin-top:4px;font-size:11.5px;color:var(--muted)">
+          <span>🔗 ${c.url}</span><span>📅 ${c.semana}</span><span>📊 ${c.kw}</span>
+        </div>
+      </div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="sec-label" style="margin-top:0">Mix de Contenido LinkedIn</div>
+      ${linkedinMix.map(m=>`
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--border2)">
+        <div style="font-size:18px;font-weight:900;color:var(--navy);min-width:40px">${m[0]}</div>
+        <div><div style="font-size:13px;font-weight:700">${m[1]}</div><div style="font-size:12px;color:var(--muted)">${m[2]}</div></div>
+      </div>`).join('')}
+    </div>`;
+}
+
+const okrData = {
+  o1: [["KR1","30 RFQs/mes promedio en Q3","24 actual","CRM"],["KR2","Pipeline de $500K generado por Marketing","$340K actual","CRM"],["KR3","15 reuniones comerciales agendadas","9 actual","CRM"]],
+  o2: [["KR1","AI SEO Score de 6/15 a 12/15","6/15 actual","Manual"],["KR2","1 citación verificada en Perplexity","0 actual","Manual"],["KR3","3 páginas nuevas publicadas y rankeadas","0 actual","GSC"]],
+  o3: [["KR1","Email open rate >28% sostenido","31% actual","MailPoet"],["KR2","48 posts LinkedIn en Q3 (4/semana)","12/mes actual","LinkedIn Analytics"],["KR3","2 blog posts publicados por mes","0.5/mes actual","WordPress"]],
+};
+const okrColors = { o1:["var(--navy3)","var(--navy)"], o2:["var(--green3)","var(--green2)"], o3:["#EFF6FF","#2563EB"] };
+
+function renderOKRs(){
+  Object.keys(okrData).forEach(key=>{
+    const [bg,fg] = okrColors[key];
+    document.getElementById('okr-'+key).innerHTML = okrData[key].map(k=>`
+      <div style="padding:10px 0;border-bottom:1px solid var(--border2);display:flex;gap:12px;align-items:center">
+        <div style="font-size:10px;font-weight:800;background:${bg};color:${fg};padding:2px 7px;border-radius:4px;white-space:nowrap">${k[0]}</div>
+        <div style="flex:1"><div style="font-size:13px;font-weight:600">${k[1]}</div><div style="font-size:11.5px;color:var(--muted)">Actual: ${k[2]} · Fuente: ${k[3]}</div></div>
+      </div>`).join('');
+  });
+}
+
+const journeyStages = [
+  ["🔍 Awareness","El cliente identifica que necesita un freight broker confiable en Norteamérica","Google Search, LinkedIn, referidos","Blog posts, LinkedIn, AI Overviews"],
+  ["🤔 Consideración","Compara DGL vs competidores. Revisa web, servicios y credibilidad","dglus.com/faqs, pricing page, LinkedIn","Páginas de servicio, casos, testimonials"],
+  ["📋 Evaluación","Solicita cotización y compara precios, tiempos y servicio","RFQ form, email, llamada","Propuesta, one-pager, respuesta rápida"],
+  ["✅ Decisión","Aprueba el servicio y envía la primera operación","Email, phone","Contrato, onboarding, primer pickup"],
+  ["🔄 Retención","Se convierte en cuenta recurrente y refiere a otros","Email nurture, CRM, llamadas","Reportes, proactive comm, upsell"],
+];
+function renderJourney(){
+  document.getElementById('journey-grid').innerHTML = journeyStages.map(s=>`
+    <div style="background:#fff;padding:16px">
+      <div style="font-size:13px;font-weight:800;margin-bottom:8px">${s[0]}</div>
+      <div style="font-size:11.5px;color:var(--text);line-height:1.5;margin-bottom:8px">${s[1]}</div>
+      <div style="font-size:10.5px;color:var(--muted);margin-bottom:4px"><strong>Touchpoints:</strong> ${s[2]}</div>
+      <div style="font-size:10.5px;color:var(--green2)"><strong>DGL acción:</strong> ${s[3]}</div>
+    </div>`).join('');
+}
+
+const fodaData = {
+  fortalezas: ["Especialización en cross-border USA-México","Respuesta rápida y atención personalizada","Conocimiento operativo profundo (pedimentos, pilotos, bonded)","Flexibilidad para carga compleja: HazMat, oversized, refrigerado","Tecnología aplicada (Claude AI) para mejorar servicio"],
+  debilidades: ["Presencia digital limitada vs grandes brokers","Score AI SEO bajo (6/15)","Contenido educativo insuficiente","Equipo de marketing pequeño (1 persona)","CRM no totalmente optimizado"],
+  oportunidades: ["Nearshoring en México genera demanda cross-border récord","AI Search aumenta visibilidad orgánica sin pagar ads","Freight forwarders buscan brokers terrestres confiables","Grandes brokers son lentos y genéricos — DGL puede ser más ágil","LinkedIn B2B logistics aún poco explotado"],
+  amenazas: ["CH Robinson, Echo, XPO tienen recursos masivos de marketing","Volatilidad de tarifas de flete presiona márgenes","Regulaciones cambiantes en frontera USA-México","Tecnología de carriers que buscan eliminar el broker","Recesión reduce volumen de importaciones"],
+};
+function renderFODA(){
+  Object.keys(fodaData).forEach(key=>{
+    document.getElementById('foda-'+key).innerHTML = fodaData[key].map(f=>`<div style="font-size:13px;padding:5px 0;border-bottom:1px solid var(--border2)">• ${f}</div>`).join('');
+  });
+}
+
+const benchmarkRows = [
+  ["Email Open Rate","31%",">25%","✅ Por encima"],
+  ["Email CTR","3.8%",">2%","✅ Por encima"],
+  ["Sesiones Web/mes","3,240","5,000+ (meta)","🟡 En progreso"],
+  ["Conversión web a lead","1.8%","2–3%","🟡 Mejorando"],
+  ["Posts LinkedIn/mes","12","16–20","🟡 Debajo"],
+  ["Engagement LinkedIn","2.4%",">3%","🟡 Debajo"],
+  ["Costo por Lead (CPL)","$180","<$150","🔴 Optimizar"],
+  ["AI SEO Score","6/15","12–15/15 (meta)","🔴 En proceso"],
+];
+function renderBenchmark(){
+  document.getElementById('benchmark-tbody').innerHTML = benchmarkRows.map(r=>`<tr><td class="kn">${r[0]}</td><td class="kv">${r[1]}</td><td style="color:var(--muted)">${r[2]}</td><td>${r[3]}</td></tr>`).join('');
+}
+
+const brandVoice = [
+  ["✅ Usar","Lenguaje ejecutivo B2B, datos concretos, beneficios para el cliente"],
+  ["✅ Usar","Términos de industria: FTL, LTL, drayage, cross-border, intermodal"],
+  ["✅ Usar","Confianza, capacidad, velocidad de respuesta, control operativo"],
+  ["❌ Evitar","Superlativos vacíos: 'el mejor', 'increíble', 'revolucionario'"],
+  ["❌ Evitar","Lenguaje genérico: 'soluciones innovadoras', 'servicio de calidad'"],
+  ["❌ Evitar","Hablar de trucks y camiones — DGL es un broker, no un carrier"],
+];
+function renderBrandVoice(){
+  document.getElementById('brand-voice').innerHTML = brandVoice.map(l=>`<div style="font-size:12.5px;padding:7px;border-radius:6px;background:${l[0].includes('✅')?'#ECFDF5':'#FEF2F2'}">${l[0]} ${l[1]}</div>`).join('');
+}
+
+const semKeywords = [
+  ["freight broker USA Mexico","2,900/mes","Alta","dglus.com/cross-border..."],
+  ["ftl vs ltl freight","8,100/mes","Alta","dglus.com/ftl-vs-ltl/"],
+  ["what is a freight broker","40,500/mes","Media","dglus.com/what-is-a-freight-broker/"],
+  ["drayage rates 2026","1,600/mes","Alta","dglus.com/drayage-rates/"],
+  ["ltl freight class guide","3,200/mes","Media","dglus.com/ltl-freight-class/"],
+];
+const semTechnical = [
+  ["Core Web Vitals","✅ Optimizado con WP Rocket"],
+  ["Sitemap XML","✅ Generado por RankMath"],
+  ["robots.txt","⚠ Corrección parcial — Cloudflare pendiente"],
+  ["Schema FAQPage","✅ Live en /faqs/"],
+  ["Organization Schema","✅ Live en homepage"],
+  ["llms.txt","❌ Pendiente subir al servidor"],
+  ["Velocidad móvil","🟡 En revisión"],
+];
+function renderSEM(){
+  document.getElementById('sem-keywords').innerHTML = semKeywords.map(k=>`
+    <div style="padding:9px 0;border-bottom:1px solid var(--border2)">
+      <div style="font-size:13px;font-weight:600;font-family:monospace">"${k[0]}"</div>
+      <div style="display:flex;gap:12px;margin-top:4px;font-size:11.5px;color:var(--muted)">
+        <span>📊 ${k[1]}</span><span>💰 Comp ${k[2]}</span><span>🔗 ${k[3]}</span>
+      </div>
+    </div>`).join('');
+  document.getElementById('sem-technical').innerHTML = semTechnical.map(i=>`
+    <div style="padding:8px 0;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between">
+      <span style="font-size:13px;font-weight:500">${i[0]}</span>
+      <span style="font-size:12.5px">${i[1]}</span>
+    </div>`).join('');
+}
+
+const mktgCampaigns = [
+  {name:"Outbound — Importadores Miami",type:"Generación de Demanda",status:"progress",desc:"Secuencia de 3 emails ultra-personalizados a importadores de Miami con operaciones Cross-Border. Segmento: empresas con HQ en Miami-Dade, revenue >$5M, industria retail/consumer goods.",meta:"10 respuestas, 3 calls agendadas",inicio:"Jul 8",owner:"Cristian S."},
+  {name:"Nurture — Leads Inactivos +60 días",type:"Reactivación",status:"pending",desc:"Campaña de re-engagement para leads en CRM sin interacción en 60+ días. Ángulo diferente: tendencias de nearshoring y cómo afecta sus operaciones de importación desde México.",meta:"5% tasa de reactivación",inicio:"Jul 15",owner:"Cristian S."},
+  {name:"AI SEO — Contenido Cross-Border",type:"Posicionamiento",status:"active",desc:"Publicación de 3 páginas clave para captura de demanda en AI Overviews: FTL vs LTL, What is a Freight Broker, Cross-Border USA-Mexico Guide.",meta:"3 páginas publicadas, 1 citación AI",inicio:"En progreso",owner:"Cristian S."},
+  {name:"LinkedIn — Posicionamiento Autoridad",type:"Brand Awareness",status:"active",desc:"Publicación de 4 posts semanales en LinkedIn con mix educativo (40%), industria (30%), DGL (20%), social proof (10%). Goal: posicionar a Cristian Serna como referente logístico.",meta:"16+ posts/mes, engagement >3%",inicio:"Continuo",owner:"Cristian S."},
+];
+function renderMktgCampaigns(){
+  document.getElementById('mktg-campaigns').innerHTML = mktgCampaigns.map(c=>`
+    <div class="card" style="display:flex;gap:16px;align-items:flex-start">
+      <div style="flex:1">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <div style="font-size:14px;font-weight:700">${c.name}</div>
+          <span class="badge ${c.status==='active'?'b-active':c.status==='progress'?'b-progress':'b-pending'}">${c.status==='active'?'Active':c.status==='progress'?'En Progreso':'Pendiente'}</span>
+        </div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px">${c.type}</div>
+        <div style="font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:8px">${c.desc}</div>
+        <div style="font-size:12px;display:flex;gap:14px;color:var(--muted)"><span>🎯 Meta: ${c.meta}</span><span>📅 Inicio: ${c.inicio}</span><span>👤 ${c.owner}</span></div>
+      </div>
+    </div>`).join('');
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+
+renderDashboard();
+renderProcesses();
+renderTools();
+renderKPIs();
+renderAutomations();
+renderAI();
+renderTeam();
+renderDeliverables();
+renderCalendar();
+renderSEO();
+renderContentStrategy();
+renderOKRs();
+renderJourney();
+renderFODA();
+renderBenchmark();
+renderBrandVoice();
+renderSEM();
+renderMktgCampaigns();
+renderExec();
+renderCRM();
+renderCampaigns();
+renderClaude();
+renderPrompts();
+renderKnowledge();
+renderDocs();
+if(typeof Chart!=='undefined') initCharts();
+else window.addEventListener('load',initCharts);
+
+</script>
+</body>
+</html>
