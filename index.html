@@ -378,6 +378,14 @@ body{display:flex;flex-direction:column;overflow:hidden}
 
 .badge-live{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;color:var(--green2);background:var(--green3);padding:2px 8px;border-radius:20px}
 .badge-live::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green2);animation:pulse 1.6s infinite}
+
+/* LANDING PAGES */
+.lpcard{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:12px;display:flex;gap:16px;align-items:flex-start}
+.lpcard:hover{border-color:var(--navy);box-shadow:0 2px 12px rgba(5,3,92,.07)}
+.lp-conv{min-width:82px;text-align:center;padding:10px 6px;border-radius:9px;background:var(--bg);flex-shrink:0}
+.lp-conv-val{font-size:20px;font-weight:800;color:var(--navy)}
+.lp-conv-lbl{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.lp-url{font-family:ui-monospace,monospace;font-size:12px;color:var(--navy);background:var(--navy3);padding:2px 8px;border-radius:5px;display:inline-block}
 </style>
 </head>
 <body>
@@ -463,6 +471,7 @@ body{display:flex;flex-direction:column;overflow:hidden}
     <div class="nav-item" data-section="sem" data-tip="SEO & SEM"><span class="nav-icon">🔍</span> SEO & SEM</div>
     <div class="nav-item" data-section="mktg" data-tip="Marketing"><span class="nav-icon">📢</span> Marketing</div>
     <div class="nav-item" data-section="contenido" data-tip="Contenido"><span class="nav-icon">📝</span> Contenido</div>
+    <div class="nav-item" data-section="landing" data-tip="Landing Pages"><span class="nav-icon">🎯</span> Landing Pages</div>
 
     <div class="nav-label">Conocimiento</div>
     <div class="nav-item" data-section="knowledge" data-tip="Centro de Conocimiento"><span class="nav-icon">🎓</span> Centro de Conocimiento</div>
@@ -838,6 +847,14 @@ body{display:flex;flex-direction:column;overflow:hidden}
       <div class="pg-sub">Plan editorial Q3 2026 · Contenido AI-optimizado para freight brokerage</div>
       <div class="ibox">🎯 Todo el contenido se diseña con doble propósito: posicionar en Google Y ser citado por ChatGPT, Perplexity y Google AI Overviews. Estructura: definición extractable + tabla comparativa + FAQ con schema.</div>
       <div class="g2" id="contenido-grid"></div>
+    </div>
+
+    <div class="section" id="landing">
+      <div class="pg-title">Landing Pages</div>
+      <div class="pg-sub">Capa de conversión — el punto donde tráfico se convierte en RFQ</div>
+      <div class="ibox">🎯 Ninguna landing page existe sin objetivo de conversión y campaña asociada. Esta es la capa que traduce SEO/GEO y campañas en oportunidades reales dentro del CRM.</div>
+      <div class="g4" id="landing-kpis" style="margin-bottom:20px"></div>
+      <div id="landing-grid"></div>
     </div>
 
   </div><!-- /content -->
@@ -1796,6 +1813,7 @@ const promptLibrary = {
 };
 
 const knowledgeArticles = [
+  {icon:"🧭",cat:"Gobierno",title:"Perfil Estratégico del Director de Marketing DGL",desc:"Rol, filosofía de trabajo, estándar de calidad y objetivos permanentes que gobiernan toda decisión de marketing en DGL — humana o asistida por IA."},
   {icon:"📦",cat:"Fundamentos",title:"FTL vs LTL: cómo elegir el modo correcto",desc:"Guía interna para explicar a prospectos la diferencia operativa y de costos entre Full Truckload y Less Than Truckload."},
   {icon:"🛃",cat:"Cross-Border",title:"Qué necesita saber un cliente sobre pedimentos y cruces fronterizos",desc:"Checklist de documentación y tiempos típicos para operaciones USA-México que el equipo comercial debe dominar."},
   {icon:"🏗️",cat:"Servicios DGL",title:"Cuándo recomendar Drayage vs Intermodal",desc:"Criterios de decisión según puerto de entrada, distancia y urgencia del cliente."},
@@ -1805,6 +1823,9 @@ const knowledgeArticles = [
 ];
 
 const docLibrary = [
+  {icon:"🧭",color:"#05035C",name:"Perfil Estratégico y Filosofía de Trabajo — Director de Marketing",type:"DOCX · Gobierno",updated:"Jul 2026"},
+  {icon:"📜",color:"#77B82A",name:"Carta de Constitución del Departamento de Marketing",type:"DOCX · Gobierno",updated:"Jul 2026"},
+  {icon:"🎯",color:"#3B82F6",name:"Cascada de Objetivos DGL → Comercial → Marketing",type:"DOCX · Gobierno",updated:"Jul 2026"},
   {icon:"📄",color:"#05035C",name:"Brand Guidelines DGL 2026",type:"PDF · Branding",updated:"Jun 2026"},
   {icon:"📊",color:"#3B82F6",name:"Plantilla Reporte Ejecutivo Mensual",type:"DOCX · Reporting",updated:"Jun 2026"},
   {icon:"📋",color:"#77B82A",name:"One-Pager de Servicios DGL (ES/EN)",type:"PDF · Ventas",updated:"May 2026"},
@@ -1892,11 +1913,12 @@ function renderCampaigns(){
 
 function renderClaude(){
   document.getElementById('claude-content').innerHTML = `
+    <div class="ibox">🧭 <b>Contexto activo:</b> este panel opera bajo el Perfil Estratégico del Director de Marketing DGL — CMO B2B especializado en Freight Brokerage, con estándar de consultoría senior y prioridad absoluta en impacto comercial medible (RFQs, pipeline, reactivación, autoridad digital). Ver documento completo en Centro de Conocimiento / Biblioteca Documental.</div>
     <div class="g2" style="grid-template-columns:1.4fr 1fr">
       <div class="chatbox">
-        <div class="chat-head">🤖 Claude AI — Asistente Estratégico DGL</div>
+        <div class="chat-head">🤖 Claude AI — Vista de Demostración <span style="margin-left:auto;font-weight:500;opacity:.85;font-size:11px">Simulación · no conectado en vivo</span></div>
         <div class="chat-msgs" id="claude-msgs">
-          <div class="msg ai">Hola Cristian. Puedo ayudarte a analizar prospectos, redactar campañas, revisar KPIs o construir contenido AI SEO. ¿Qué necesitas hoy?</div>
+          <div class="msg ai">Hola Cristian. Esta es una vista ilustrativa de cómo se usa el asistente dentro del flujo de trabajo — para una conversación real con el contexto completo del proyecto cargado, usa el botón de abajo.</div>
         </div>
         <div class="chat-suggest">
           <div class="chip" onclick="claudeDemo('Analiza el prospecto Meridian Imports')">Analizar prospecto</div>
@@ -1906,6 +1928,9 @@ function renderClaude(){
         <div class="chat-input-row">
           <input type="text" id="claude-input" placeholder="Escribe tu instrucción para Claude..." onkeydown="if(event.key==='Enter')claudeDemo(this.value)">
           <button class="btn btn-primary" onclick="claudeDemo(document.getElementById('claude-input').value)">Enviar</button>
+        </div>
+        <div style="padding:12px 14px;border-top:1px solid var(--border)">
+          <a href="https://claude.ai" target="_blank" rel="noopener" class="btn btn-primary" style="width:100%;justify-content:center;text-decoration:none;box-sizing:border-box">🔗 Abrir conversación real con el Director de Marketing AI</a>
         </div>
       </div>
       <div>
@@ -2227,7 +2252,40 @@ renderTeam();
 renderDeliverables();
 renderCalendar();
 renderSEO();
+const landingPages = [
+  {url:"/cotizar/",tipo:"RFQ Capture",objetivo:"Formulario de cotización directa",campana:"Todas (página núcleo)",estado:"live",cta:"Solicitar Cotización",conv:"4.2%"},
+  {url:"/cross-border-shipping-usa-mexico/",tipo:"Campaña específica",objetivo:"Captar exportadores/importadores México-Texas",campana:"Cross-Border México → Texas",estado:"live",cta:"Cotizar envío cross-border",conv:"3.1%"},
+  {url:"/freight-forwarders-partners/",tipo:"Campaña específica",objetivo:"Captar freight forwarders para partnership terrestre",campana:"Nurture Freight Forwarders LATAM",estado:"live",cta:"Agendar llamada de partnership",conv:"2.6%"},
+  {url:"/ftl-vs-ltl/",tipo:"Contenido / Lead Magnet",objetivo:"Educar y capturar email para nurture",campana:"AI SEO — Contenido Cross-Border",estado:"pending",cta:"Descargar guía comparativa",conv:"—"},
+  {url:"/drayage-rates/",tipo:"Contenido / Lead Magnet",objetivo:"Capturar interés en tarifas de Drayage",campana:"AI SEO — Contenido Cross-Border",estado:"pending",cta:"Solicitar tarifa personalizada",conv:"—"},
+  {url:"/reactivacion-cuentas-inactivas/",tipo:"Campaña específica",objetivo:"Reactivar cuentas sin operación 6+ meses",campana:"Reactivación Q3 — Cuentas Inactivas",estado:"pending",cta:"Ver disponibilidad de capacidad",conv:"—"},
+];
+
+function renderLanding(){
+  const live = landingPages.filter(l=>l.estado==='live');
+  const avgConv = live.length ? (live.reduce((s,l)=>s+parseFloat(l.conv),0)/live.length).toFixed(1) : '0';
+  document.getElementById('landing-kpis').innerHTML = `
+    <div class="kcard"><div class="kcard-label">Landing Pages Activas</div><div class="kcard-val">${live.length}</div><div class="kcard-sub">de ${landingPages.length} planeadas</div></div>
+    <div class="kcard blue"><div class="kcard-label">Conversión Promedio</div><div class="kcard-val">${avgConv}%</div><div class="kcard-sub">Meta: &gt;3%</div></div>
+    <div class="kcard navy"><div class="kcard-label">Vinculadas a Campaña</div><div class="kcard-val">${landingPages.filter(l=>l.campana!=='Todas (página núcleo)').length}</div><div class="kcard-sub">de ${landingPages.length} totales</div></div>
+    <div class="kcard amber"><div class="kcard-label">Pendientes de Publicar</div><div class="kcard-val">${landingPages.filter(l=>l.estado==='pending').length}</div><div class="kcard-sub">Bloquean campañas activas</div></div>`;
+  document.getElementById('landing-grid').innerHTML = landingPages.map(l=>`
+    <div class="lpcard">
+      <div class="lp-conv"><div class="lp-conv-val">${l.conv}</div><div class="lp-conv-lbl">Conversión</div></div>
+      <div style="flex:1">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap">
+          <span class="lp-url">${l.url}</span>
+          <span class="badge ${l.estado==='live'?'b-active':'b-pending'}">${l.estado==='live'?'Live':'Pendiente'}</span>
+        </div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:4px">${l.tipo}</div>
+        <div style="font-size:13px;color:var(--text);margin-bottom:6px">${l.objetivo}</div>
+        <div style="font-size:12px;color:var(--muted)">🚀 ${l.campana} &nbsp;·&nbsp; 🎯 CTA: ${l.cta}</div>
+      </div>
+    </div>`).join('');
+}
+
 renderContentStrategy();
+renderLanding();
 renderOKRs();
 renderJourney();
 renderFODA();
@@ -2248,4 +2306,3 @@ else window.addEventListener('load',initCharts);
 </script>
 </body>
 </html>
-
