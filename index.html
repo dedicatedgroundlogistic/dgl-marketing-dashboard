@@ -283,6 +283,81 @@ body{display:flex;flex-direction:column;overflow:hidden}
 /* CHART CONTAINERS */
 .chart-row{display:grid;grid-template-columns:1.7fr 1fr;gap:16px;margin-bottom:20px}
 @media(max-width:1100px){.chart-row{grid-template-columns:1fr}}
+
+/* ═══════════════ RESPONSIVE / MOBILE ═══════════════ */
+.mobile-hamburger{display:none;color:#fff;font-size:20px;cursor:pointer;padding:4px 8px;margin-right:4px}
+.mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:150}
+.mobile-overlay.open{display:block}
+
+@media(max-width:1024px){
+  .g4{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(2,1fr)}
+  .g2{grid-template-columns:1fr}
+  #camp-grid,#know-grid,#docs-grid{grid-template-columns:1fr!important}
+  #crm-board{grid-template-columns:repeat(3,minmax(180px,1fr))!important;overflow-x:auto}
+}
+
+@media(max-width:768px){
+  html,body{overflow-x:hidden}
+  .mobile-hamburger{display:block}
+  .tn-brand{width:auto!important;border-right:none;padding:0 10px;gap:8px}
+  .tn-titles{display:none}
+  .tn-center{display:none}
+  .tn-right{padding-right:12px;gap:8px}
+  .tn-date{display:none}
+  .tn-uname{display:none}
+  .topnav{padding:0}
+
+  .app-body{position:relative}
+  .sidebar{position:fixed;top:58px;left:0;bottom:0;z-index:160;transform:translateX(-100%);transition:transform .25s ease;width:78vw;max-width:300px;box-shadow:8px 0 24px rgba(0,0,0,.25)}
+  .sidebar.mobile-open{transform:translateX(0)}
+  .sidebar.collapsed{width:78vw;max-width:300px}
+  .sidebar.collapsed .nav-label,.sidebar.collapsed .logo-text,.sidebar.collapsed .logo-sub,.sidebar.collapsed .sb-search,.sidebar.collapsed .nav-item span:not(.nav-icon),.sidebar.collapsed .nav-arr,.sidebar.collapsed .nav-sub,.sidebar.collapsed .user-name,.sidebar.collapsed .user-role,.sidebar.collapsed .sb-version,.sidebar.collapsed .nav-pill{display:revert}
+  .sidebar.collapsed .nav-item{justify-content:flex-start}
+  .sb-collapse-btn{display:none}
+  .mobile-overlay.open{display:block}
+
+  .main{width:100%}
+  .content{padding:14px}
+  .pg-title{font-size:18px}
+  .pg-sub{font-size:12px;margin-bottom:16px}
+
+  .g4,.g3,.g2{grid-template-columns:1fr!important;gap:12px}
+  #crm-board{grid-template-columns:1fr!important}
+  .stage-col{margin-bottom:10px}
+  .camp-top{flex-direction:column;gap:8px}
+  .exec-hero{padding:18px}
+  .exec-big{font-size:24px}
+  .chart-row{grid-template-columns:1fr}
+
+  .card,.kcard,.chart-card,.tcard,.pcard,.acard,.aicard,.promptcard,.doccard,.campcard,.lpcard,.chatbox{padding:14px}
+  .kcard-val{font-size:24px}
+  .team-card{max-width:100%}
+
+  .ktable{display:block;overflow-x:auto;white-space:nowrap}
+  .raci{display:block;overflow-x:auto;white-space:nowrap}
+  .cal{overflow-x:auto;display:block;min-width:600px}
+
+  .modal-panel{width:94vw;max-height:80vh}
+  .search-overlay{padding-top:6vh}
+
+  .dgrid{grid-template-columns:1fr}
+  .lpcard{flex-direction:column}
+  .lp-conv{align-self:flex-start}
+
+  .tabs{overflow-x:auto;flex-wrap:nowrap;white-space:nowrap}
+  .btn{padding:8px 12px;font-size:12px}
+
+  #journey-grid{grid-template-columns:1fr!important;min-width:0!important}
+}
+
+@media(max-width:420px){
+  .content{padding:10px}
+  .g4,.g3,.g2{gap:10px}
+  .kcard,.card{padding:12px}
+  .tn-logo{font-size:11px;padding:4px 8px}
+}
+
 .chart-card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:20px}
 .chart-title{font-size:14px;font-weight:700;margin-bottom:3px}
 .chart-sub{font-size:11px;color:var(--muted);margin-bottom:14px}
@@ -393,6 +468,7 @@ body{display:flex;flex-direction:column;overflow:hidden}
 <!-- TOP NAV -->
 <header class="topnav">
   <div class="tn-brand" id="tn-brand">
+    <div class="mobile-hamburger" onclick="toggleMobileSidebar()">☰</div>
     <div class="tn-logo">DGL</div>
     <div class="tn-titles">
       <div class="tn-title">Marketing OS</div>
@@ -427,6 +503,7 @@ body{display:flex;flex-direction:column;overflow:hidden}
   </div>
 </div>
 
+<div class="mobile-overlay" id="mobile-overlay" onclick="toggleMobileSidebar()"></div>
 <div class="app-body">
 
 <aside class="sidebar" id="sidebar">
@@ -2032,6 +2109,19 @@ function toggleSidebar(){
   const brand=document.getElementById('tn-brand');
   if(brand) brand.classList.toggle('collapsed');
 }
+
+function toggleMobileSidebar(){
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+  document.getElementById('mobile-overlay').classList.toggle('open');
+}
+
+// Auto-close mobile sidebar after selecting a section
+document.addEventListener('click', e=>{
+  if(window.innerWidth<=768 && (e.target.closest('.nav-item[data-section]')||e.target.closest('.nav-sub-item'))){
+    document.getElementById('sidebar').classList.remove('mobile-open');
+    document.getElementById('mobile-overlay').classList.remove('open');
+  }
+});
 
 const searchIndex=[
   ...processes.map(p=>({title:p.name,cat:'Proceso',icon:'🔄',section:'procesos'})),
